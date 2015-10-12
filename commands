@@ -76,7 +76,7 @@ case "$1" in
     fi
 
     dokku_log_verbose_quiet "Removing data"
-    docker run --rm -v "$SERVICE_ROOT/data:/data" "$PLUGIN_IMAGE:$PLUGIN_IMAGE_VERSION" chmod 777 -R /data
+    docker run --rm -v "$SERVICE_ROOT/data:/data" busybox chmod 777 -R /data
     rm -rf "$SERVICE_ROOT"
 
     dokku_log_info2 "$PLUGIN_SERVICE container deleted: $SERVICE"
