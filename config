@@ -2,6 +2,7 @@
 export COUCHDB_IMAGE=${COUCHDB_IMAGE:="frodenas/couchdb"}
 export COUCHDB_IMAGE_VERSION=${COUCHDB_IMAGE_VERSION:="1.6"}
 export COUCHDB_ROOT=${COUCHDB_ROOT:="/var/lib/dokku/services/couchdb"}
+export COUCHDB_BACKUP=${COUCHDB_DUMP:="https://raw.githubusercontent.com/danielebailo/couchdb-dump/master/couchdb-backup.sh"}
 
 export PLUGIN_COMMAND_PREFIX="couchdb"
 export PLUGIN_DATA_ROOT=$COUCHDB_ROOT

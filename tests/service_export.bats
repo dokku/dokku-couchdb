@@ -25,6 +25,6 @@ teardown() {
   export ECHO_DOCKER_COMMAND="true"
   run dokku "$PLUGIN_COMMAND_PREFIX:export" l
   password="$(cat "$PLUGIN_DATA_ROOT/l/PASSWORD")"
-  assert_output "docker exec dokku.couchdb.l curl -X GET http://l:$password@localhost:5984/l/_all_docs?include_docs=true"
+  assert_contains "${lines[-1]}" "docker exec dokku.couchdb.l bash -c DIR=\$(mktemp -d) && couchdb-backup -b -H localhost -d \"l\" -f \"\$DIR/l.json\" -u \"l\" -p \"$password\" > /dev/null && cat \"\$DIR/l.json\" && rm -rf \"\$DIR\""
 }
 
