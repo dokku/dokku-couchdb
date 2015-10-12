@@ -154,7 +154,6 @@ case "$1" in
     verify_service_name "$2"
     SERVICE="$2"; SERVICE_ROOT="$PLUGIN_DATA_ROOT/$SERVICE"
     SERVICE_NAME="$(get_service_name "$SERVICE")"
-    has_tty && SERVICE_TTY_OPTS="-t"
 
     dokku_log_fail "Not implemented"
     ;;
