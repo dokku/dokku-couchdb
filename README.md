@@ -26,7 +26,7 @@ couchdb:clone <name> <new-name>  Create container <new-name> then copy data from
 couchdb:connect <name>           NOT IMPLEMENTED
 couchdb:create <name>            Create a couchdb service
 couchdb:destroy <name>           Delete the service and stop its container if there are no links left
-couchdb:export <name>            Export a dump of the couchdb service database
+couchdb:export <name> > <file>   Export a dump of the couchdb service database
 couchdb:expose <name> [port]     Expose a couchdb service on custom port if provided (random port otherwise)
 couchdb:import <name> < <file>   Import a dump into the couchdb service database
 couchdb:info <name>              Print the connection information
