@@ -24,7 +24,7 @@ dokku plugin:install https://github.com/dokku/dokku-couchdb.git couchdb
 ```
 couchdb:clone <name> <new-name>  Create container <new-name> then copy data from <name> into <new-name>
 couchdb:connect <name>           NOT IMPLEMENTED
-couchdb:create <name>            Create a couchdb service
+couchdb:create <name>            Create a couchdb service with environment variables
 couchdb:destroy <name>           Delete the service and stop its container if there are no links left
 couchdb:export <name>            Export a dump of the couchdb service database
 couchdb:expose <name> [port]     Expose a couchdb service on custom port if provided (random port otherwise)
@@ -52,6 +52,13 @@ dokku couchdb:create lolipop
 # fredonas/couchdb image
 export COUCHDB_IMAGE="couchdb"
 export COUCHDB_IMAGE_VERSION="1.5"
+
+# you can also specify custom environment
+# variables to start the couchdb service
+# in semi-colon separated forma
+export COUCHDB_CUSTOM_ENV="USER=alpha;HOST=beta"
+
+# create a couchdb service
 dokku couchdb:create lolipop
 
 # get connection information as follows
