@@ -38,6 +38,7 @@ couchdb:restart <name>           Graceful shutdown and restart of the couchdb se
 couchdb:start <name>             Start a previously stopped couchdb service
 couchdb:stop <name>              Stop a running couchdb service
 couchdb:unexpose <name>          Unexpose a previously exposed couchdb service
+couchdb:unlink <name> <app>      Unlink the couchdb service from the app
 ```
 
 ## usage
