@@ -1,6 +1,6 @@
 # dokku couchdb (beta) [![Build Status](https://img.shields.io/travis/dokku/dokku-couchdb.svg?branch=master "Build Status")](https://travis-ci.org/dokku/dokku-couchdb) [![IRC Network](https://img.shields.io/badge/irc-freenode-blue.svg "IRC Freenode")](https://webchat.freenode.net/?channels=dokku)
 
-Official CouchDB plugin for dokku. Currently defaults to installing [CouchDB 1.6](https://hub.docker.com/frodenas/couchdb/).
+Official CouchDB plugin for dokku. Currently defaults to installing [CouchDB 1.6](https://hub.docker.com/r/frodenas/couchdb/).
 
 ## requirements
 
