@@ -53,3 +53,11 @@ teardown() {
   run dokku config my_app
   assert_contains "${lines[*]}" "DOKKU_COUCHDB_"
 }
+
+@test "($PLUGIN_COMMAND_PREFIX:promote) uses COUCHDB_DATABASE_SCHEME variable" {
+  password="$(cat "$PLUGIN_DATA_ROOT/l/PASSWORD")"
+  dokku config:set my_app "COUCHDB_DATABASE_SCHEME=couchdb2" "COUCHDB_URL=http://u:p@host:5984/db" "DOKKU_COUCHDB_BLUE_URL=couchdb2://l:$password@dokku-couchdb-l:5984/l"
+  dokku "$PLUGIN_COMMAND_PREFIX:promote" l my_app
+  url=$(dokku config:get my_app COUCHDB_URL)
+  assert_contains "$url" "couchdb2://l:$password@dokku-couchdb-l:5984/l"
+}
