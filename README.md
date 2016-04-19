@@ -129,3 +129,30 @@ dokku couchdb:clone lolipop new_database
 # finally, you can destroy the container
 dokku couchdb:destroy lolipop
 ```
+
+## Changing database adapter
+
+It's possible to change the protocol for DATABASE_URL by setting
+the environment variable COUCHDB_DATABASE_SCHEME on the app:
+
+```
+dokku config:set playground COUCHDB_DATABASE_SCHEME=couchdb2
+dokku couchdb:link lolipop playground
+```
+
+Will cause COUCHDB_URL to be set as
+couchdb2://lolipop:SOME_PASSWORD@dokku-couchdb-lolipop:5984/lolipop
+
+CAUTION: Changing COUCHDB_DATABASE_SCHEME after linking will cause dokku to
+believe the service is not linked when attempting to use `dokku couchdb:unlink`
+or `dokku couchdb:promote`.
+You should be able to fix this by
+
+- Changing COUCHDB_URL manually to the new value.
+
+OR
+
+- Set COUCHDB_DATABASE_SCHEME back to its original setting
+- Unlink the service
+- Change COUCHDB_DATABASE_SCHEME to the desired setting
+- Relink the service
