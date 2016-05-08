@@ -370,6 +370,6 @@ service_linked_apps() {
 
 update_plugin_scheme_for_app() {
   local APP=$1
-  local COUCHDB_DATABASE_SCHEME=$(config_get $APP COUCHDB_DATABASE_SCHEME)
+  local COUCHDB_DATABASE_SCHEME=$(config_get "$APP" COUCHDB_DATABASE_SCHEME)
   PLUGIN_SCHEME=${COUCHDB_DATABASE_SCHEME:-$PLUGIN_SCHEME}
 }
