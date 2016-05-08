@@ -292,7 +292,7 @@ service_url() {
 }
 
 is_container_status() {
-  local CID=$1
+  local CID="$1"
   local TEMPLATE="{{.State.$2}}"
   local CONTAINER_STATUS=$(docker inspect -f "$TEMPLATE" "$CID" || true)
 
@@ -369,7 +369,7 @@ service_linked_apps() {
 }
 
 update_plugin_scheme_for_app() {
-  local APP=$1
+  local APP="$1"
   local COUCHDB_DATABASE_SCHEME=$(config_get "$APP" COUCHDB_DATABASE_SCHEME)
   PLUGIN_SCHEME=${COUCHDB_DATABASE_SCHEME:-$PLUGIN_SCHEME}
 }
