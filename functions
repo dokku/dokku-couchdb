@@ -38,11 +38,38 @@ service_alias() {
   echo "$SERVICE_NAME" | tr ._ -
 }
 
+service_export() {
+  local SERVICE="$1"
+  local SERVICE_ROOT="$PLUGIN_DATA_ROOT/$SERVICE"
+  local SERVICE_NAME="$(get_service_name "$SERVICE")"
+  local PASSWORD=$(< "$SERVICE_ROOT/PASSWORD")
+
+  [[ -n $SSH_TTY ]] && stty -opost
+  docker exec "$SERVICE_NAME" bash -c "[[ ! -f /usr/local/bin/couchdb-backup ]] && wget $COUCHDB_BACKUP -q -O /usr/local/bin/couchdb-backup && chmod +x /usr/local/bin/couchdb-backup" || true
+  docker exec "$SERVICE_NAME" bash -c "DIR=\$(mktemp -d) && couchdb-backup -b -H localhost -d \"$SERVICE\" -f \"\$DIR/$SERVICE.json\" -u \"$SERVICE\" -p \"$PASSWORD\" > /dev/null && cat \"\$DIR/$SERVICE.json\" && rm -rf \"\$DIR\""
+  status=$?
+  [[ -n $SSH_TTY ]] && stty opost
+  exit $status
+}
+
 service_info() {
   local SERVICE="$1"
   local SERVICE_URL=$(service_url "$SERVICE")
 
   echo "       DSN: $SERVICE_URL"
+}
+
+service_import() {
+  local SERVICE="$1"
+  local SERVICE_ROOT="$PLUGIN_DATA_ROOT/$SERVICE"
+  local SERVICE_NAME="$(get_service_name "$SERVICE")"
+  local PASSWORD=$(< "$SERVICE_ROOT/PASSWORD")
+
+  if [[ -t 0 ]]; then
+    dokku_log_fail "No data provided on stdin."
+  fi
+  docker exec "$SERVICE_NAME" bash -c "[[ ! -f /usr/local/bin/couchdb-backup ]] && wget $COUCHDB_BACKUP -q -O /usr/local/bin/couchdb-backup && chmod +x /usr/local/bin/couchdb-backup" || true
+  docker exec -i "$SERVICE_NAME" bash -c "DIR=\$(mktemp -d) && cat > \"\$DIR/$SERVICE.json\" && couchdb-backup -r -H localhost -d \"$SERVICE\" -f \"\$DIR/$SERVICE.json\" -u \"$SERVICE\" -p \"$PASSWORD\" && rm -rf \"\$DIR\""
 }
 
 service_list() {
@@ -242,6 +269,29 @@ service_start() {
   fi
 }
 
+service_create() {
+  local SERVICE="$1"
+  [[ -z "$SERVICE" ]] && dokku_log_fail "Please specify a name for the service"
+  [[ ! -d "$PLUGIN_DATA_ROOT/$SERVICE" ]] || dokku_log_fail "$PLUGIN_SERVICE service $SERVICE already exists"
+  SERVICE_ROOT="$PLUGIN_DATA_ROOT/$SERVICE"; LINKS_FILE="$SERVICE_ROOT/LINKS"
+
+  if ! docker images | grep -e "^$PLUGIN_IMAGE " | grep -q " $PLUGIN_IMAGE_VERSION " ; then
+    docker pull "$PLUGIN_IMAGE:$PLUGIN_IMAGE_VERSION" || dokku_log_fail "$PLUGIN_SERVICE image $PLUGIN_IMAGE:$PLUGIN_IMAGE_VERSION pull failed"
+  fi
+
+  mkdir -p "$SERVICE_ROOT" || dokku_log_fail "Unable to create service directory"
+  password=$(openssl rand -hex 32)
+  echo "$password" > "$SERVICE_ROOT/PASSWORD"
+  touch "$LINKS_FILE"
+
+  if [[ -n $COUCHDB_CUSTOM_ENV ]]; then
+    echo "$COUCHDB_CUSTOM_ENV" | tr ';' "\n" > "$SERVICE_ROOT/ENV"
+  else
+    echo "" > "$SERVICE_ROOT/ENV"
+  fi
+  service_create_container "$SERVICE"
+}
+
 service_create_container() {
   local SERVICE="$1"
   local SERVICE_ROOT="$PLUGIN_DATA_ROOT/$SERVICE"
@@ -254,7 +304,7 @@ service_create_container() {
   docker run --rm --link "$SERVICE_NAME:$PLUGIN_COMMAND_PREFIX" dokkupaas/wait > /dev/null
 
   dokku_log_info2 "$PLUGIN_SERVICE container created: $SERVICE"
-  dokku "$PLUGIN_COMMAND_PREFIX:info" "$SERVICE"
+  service_info "$SERVICE"
 }
 
 service_stop() {
