@@ -172,7 +172,7 @@ service_link() {
   add_passed_docker_option passed_phases[@] "--link $SERVICE_NAME:$SERVICE_ALIAS"
   config_set "$APP" "${ALIAS}_URL=$SERVICE_URL"
 
-  plugn trigger service-update "$APP" "link" "$SERVICE"
+  plugn trigger service-update "$APP" "link" "$PLUGIN_SERVICE" "$SERVICE"
 }
 
 service_linked_apps() {
