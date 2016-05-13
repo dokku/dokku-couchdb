@@ -124,6 +124,8 @@ service_link() {
   local passed_phases=(build deploy run)
   add_passed_docker_option passed_phases[@] "--link $SERVICE_NAME:$SERVICE_ALIAS"
   config_set "$APP" "${ALIAS}_URL=$SERVICE_URL"
+
+  plugn trigger service-update "$APP" "link" "$SERVICE"
 }
 
 service_alternative_alias() {
@@ -341,6 +343,8 @@ service_unlink() {
   local passed_phases=(build deploy run)
   remove_passed_docker_option passed_phases[@] "--link $SERVICE_NAME:$SERVICE_ALIAS"
   config_unset "$APP" "${LINK[*]}"
+
+  plugn trigger service-update "$APP" "unlink" "$SERVICE"
 }
 
 service_url() {
