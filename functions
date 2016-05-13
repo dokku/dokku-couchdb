@@ -171,6 +171,8 @@ service_link() {
   local passed_phases=(build deploy run)
   add_passed_docker_option passed_phases[@] "--link $SERVICE_NAME:$SERVICE_ALIAS"
   config_set "$APP" "${ALIAS}_URL=$SERVICE_URL"
+
+  plugn trigger service-update "$APP" "link" "$SERVICE"
 }
 
 service_linked_apps() {
@@ -332,6 +334,8 @@ service_unlink() {
   local passed_phases=(build deploy run)
   remove_passed_docker_option passed_phases[@] "--link $SERVICE_NAME:$SERVICE_ALIAS"
   config_unset "$APP" "${LINK[*]}"
+
+  plugn trigger service-update "$APP" "unlink" "$SERVICE"
 }
 
 service_version() {
@@ -400,11 +404,10 @@ service_import() {
   local SERVICE_NAME="$(get_service_name "$SERVICE")"
   local PASSWORD=$(< "$SERVICE_ROOT/PASSWORD")
 
-  if [[ -t 0 ]]; then
-    dokku_log_fail "No data provided on stdin."
-  fi
-  docker exec "$SERVICE_NAME" bash -c "[[ ! -f /usr/local/bin/couchdb-backup ]] && wget $COUCHDB_BACKUP -q -O /usr/local/bin/couchdb-backup && chmod +x /usr/local/bin/couchdb-backup" || true
-  docker exec -i "$SERVICE_NAME" bash -c "DIR=\$(mktemp -d) && cat > \"\$DIR/$SERVICE.json\" && couchdb-backup -r -H localhost -d \"$SERVICE\" -f \"\$DIR/$SERVICE.json\" -u \"$SERVICE\" -p \"$PASSWORD\" && rm -rf \"\$DIR\""
+  # shellcheck disable=SC2034
+  local passed_phases=(build deploy run)
+  remove_passed_docker_option passed_phases[@] "--link $SERVICE_NAME:$SERVICE_ALIAS"
+  config_unset "$APP" "${LINK[*]}"
 }
 
 service_start() {
