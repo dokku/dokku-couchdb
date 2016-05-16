@@ -112,20 +112,20 @@ help_content
       # shellcheck disable=SC2034
       declare desc="return $PLUGIN_COMMAND_PREFIX plugin help content"
       cat<<help_list
-      NAME, VERSION, STATUS, EXPOSED, PORTS, LINKS
+      NAME, VERSION, STATUS, EXPOSED PORTS, LINKS
       service-name, $PLUGIN_COMMAND_PREFIX:$PLUGIN_IMAGE_VERSION, running, -, app-name
 help_list
     }
 
-    if [[ $1 = "couchdb:help" ]] ; then
+    if [[ $1 = "$PLUGIN_COMMAND_PREFIX:help" ]] ; then
       echo -e "Usage: dokku $PLUGIN_COMMAND_PREFIX[:COMMAND]"
       echo ''
-      echo 'List your couchdb services.'
+      echo "List your $PLUGIN_COMMAND_PREFIX services."
       echo ''
       echo 'Example:'
       echo ''
-      echo '$ dokku couchdb:list'
-      help_list_func | column -c6 -t -s,
+      echo "\$ dokku $PLUGIN_COMMAND_PREFIX:list"
+      help_list_func | column -c5 -t -s,
       echo ''
       echo 'Additional commands:'
       help_content_func | sort | column -c2 -t -s,
