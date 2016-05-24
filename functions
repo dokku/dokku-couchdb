@@ -408,6 +408,8 @@ service_import() {
   local passed_phases=(build deploy run)
   remove_passed_docker_option passed_phases[@] "--link $SERVICE_NAME:$SERVICE_ALIAS"
   config_unset "$APP" "${LINK[*]}"
+
+  plugn trigger service-update "$APP" "unlink" "$PLUGIN_SERVICE" "$SERVICE"
 }
 
 service_start() {
