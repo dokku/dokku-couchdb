@@ -353,8 +353,8 @@ service_create() {
   fi
 
   mkdir -p "$SERVICE_ROOT" || dokku_log_fail "Unable to create service directory"
-  password=$(openssl rand -hex 32)
-  echo "$password" > "$SERVICE_ROOT/PASSWORD"
+  PASSWORD=$(openssl rand -hex 32)
+  echo "$PASSWORD" > "$SERVICE_ROOT/PASSWORD"
   touch "$LINKS_FILE"
 
   if [[ -n $COUCHDB_CUSTOM_ENV ]]; then
