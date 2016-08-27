@@ -11,7 +11,7 @@ Official CouchDB plugin for dokku. Currently defaults to installing [CouchDB 1.6
 
 ```shell
 # on 0.4.x+
-dokku plugin:install https://github.com/dokku/dokku-couchdb.git couchdb
+sudo dokku plugin:install https://github.com/dokku/dokku-couchdb.git couchdb
 ```
 
 ## commands
