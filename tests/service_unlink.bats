@@ -40,7 +40,9 @@ teardown() {
   dokku "$PLUGIN_COMMAND_PREFIX:link" l my_app >&2
   dokku "$PLUGIN_COMMAND_PREFIX:unlink" l my_app
   options=$(dokku docker-options my_app)
-  assert_equal "$options" ""
+  check_value=""
+  [[ "$(at-least-version 0.7.0 "$(dokku version)")" == "true" ]] && check_value="--restart=on-failure:10"
+  assert_equal "$options" "$check_value"
 }
 
 @test "($PLUGIN_COMMAND_PREFIX:unlink) unsets config url from app" {
