@@ -41,6 +41,7 @@ teardown() {
   dokku "$PLUGIN_COMMAND_PREFIX:unlink" l my_app
   options=$(dokku docker-options my_app | xargs)
   check_value=""
+  [[ "$(dokku version)" == "master" ]] && check_value="Deploy options: --restart=on-failure:10"
   [[ "$(at-least-version 0.7.0 "$(dokku version)")" == "true" ]] && check_value="Deploy options: --restart=on-failure:10"
   assert_equal "$options" "$check_value"
 }
