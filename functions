@@ -141,8 +141,11 @@ service_exposed_ports() {
 service_info() {
   local SERVICE="$1"
   local SERVICE_URL=$(service_url "$SERVICE")
+  local SERVICE_ROOT="$PLUGIN_DATA_ROOT/$SERVICE"
 
   echo "       DSN: $SERVICE_URL"
+  echo "       Config dir: $SERVICE_ROOT/config"
+  echo "       Data dir: $SERVICE_ROOT/data"
 }
 
 service_link() {
