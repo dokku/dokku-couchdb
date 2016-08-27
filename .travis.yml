@@ -9,6 +9,6 @@ env:
   - DOKKU_VERSION=v0.4.0
 matrix:
   allow_failures:
-    - DOKKU_VERSION=master
+    - env: DOKKU_VERSION=master
 before_install: make setup
 script: make test
