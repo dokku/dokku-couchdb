@@ -370,6 +370,7 @@ service_create() {
   mkdir -p "$SERVICE_ROOT/config" || dokku_log_fail "Unable to create service config directory"
   PASSWORD=$(openssl rand -hex 32)
   echo "$PASSWORD" > "$SERVICE_ROOT/PASSWORD"
+  chmod 640 "$SERVICE_ROOT/PASSWORD"
   touch "$LINKS_FILE"
 
   if [[ -n $COUCHDB_CUSTOM_ENV ]]; then
