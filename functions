@@ -397,7 +397,7 @@ service_export() {
   local SERVICE="$1"
   local SERVICE_ROOT="$PLUGIN_DATA_ROOT/$SERVICE"
   local SERVICE_NAME="$(get_service_name "$SERVICE")"
-  local PASSWORD=$(< "$SERVICE_ROOT/PASSWORD")
+  local PASSWORD="$(cat "$SERVICE_ROOT/PASSWORD")"
 
   [[ -n $SSH_TTY ]] && stty -opost
   docker exec "$SERVICE_NAME" bash -c "[[ ! -f /usr/local/bin/couchdb-backup ]] && wget $COUCHDB_BACKUP -q -O /usr/local/bin/couchdb-backup && chmod +x /usr/local/bin/couchdb-backup" || true
@@ -411,7 +411,7 @@ service_import() {
   local SERVICE="$1"
   local SERVICE_ROOT="$PLUGIN_DATA_ROOT/$SERVICE"
   local SERVICE_NAME="$(get_service_name "$SERVICE")"
-  local PASSWORD=$(< "$SERVICE_ROOT/PASSWORD")
+  local PASSWORD="$(cat "$SERVICE_ROOT/PASSWORD")"
 
   if [[ -t 0 ]]; then
     dokku_log_fail "No data provided on stdin."
@@ -434,7 +434,7 @@ service_start() {
   dokku_log_info1_quiet "Starting container"
   local PREVIOUS_ID=$(docker ps -f status=exited | grep -e "$SERVICE_NAME$" | awk '{print $1}') || true
   local IMAGE_EXISTS=$(docker images | grep -e "^$PLUGIN_IMAGE " | grep -q " $PLUGIN_IMAGE_VERSION " && true)
-  local PASSWORD=$(cat "$SERVICE_ROOT/PASSWORD")
+  local PASSWORD="$(cat "$SERVICE_ROOT/PASSWORD")"
 
   if [[ -n $PREVIOUS_ID ]]; then
     docker start "$PREVIOUS_ID" > /dev/null
@@ -450,7 +450,7 @@ service_start() {
 service_url() {
   local SERVICE="$1"
   local SERVICE_ROOT="$PLUGIN_DATA_ROOT/$SERVICE"
-  local PASSWORD="$(< "$SERVICE_ROOT/PASSWORD")"
+  local PASSWORD="$(cat "$SERVICE_ROOT/PASSWORD")"
   local SERVICE_ALIAS="$(service_alias "$SERVICE")"
   echo "$PLUGIN_SCHEME://$SERVICE:$PASSWORD@$SERVICE_ALIAS:${PLUGIN_DATASTORE_PORTS[0]}/$SERVICE"
 }
