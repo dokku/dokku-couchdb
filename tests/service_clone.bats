@@ -35,7 +35,7 @@ teardown() {
 
 @test "($PLUGIN_COMMAND_PREFIX:clone) success" {
   run dokku "$PLUGIN_COMMAND_PREFIX:clone" l new_service
-  [[ -f $PLUGIN_DATA_ROOT/new_service/PASSWORD ]]
+  [[ -f $PLUGIN_DATA_ROOT/new_service/ID ]]
   assert_contains "${lines[*]}" "Copying data from l to new_service"
   assert_contains "${lines[*]}" "Done"
 }
