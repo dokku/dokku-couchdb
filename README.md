@@ -64,6 +64,7 @@ dokku couchdb:info lolipop --config-dir
 dokku couchdb:info lolipop --data-dir
 dokku couchdb:info lolipop --dsn
 dokku couchdb:info lolipop --exposed-ports
+dokku couchdb:info lolipop --id
 dokku couchdb:info lolipop --links
 dokku couchdb:info lolipop --status
 dokku couchdb:info lolipop --version
