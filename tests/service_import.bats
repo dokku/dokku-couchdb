@@ -31,7 +31,7 @@ teardown() {
 @test "($PLUGIN_COMMAND_PREFIX:import) success" {
   export ECHO_DOCKER_COMMAND="true"
   run dokku "$PLUGIN_COMMAND_PREFIX:import" l < "$PLUGIN_DATA_ROOT/fake.json"
-  password="$(< "$PLUGIN_DATA_ROOT/l/PASSWORD")"
+  password="$(cat "$PLUGIN_DATA_ROOT/l/PASSWORD")"
   assert_contains "${lines[-1]}" "docker exec -i dokku.couchdb.l bash -c DIR=\$(mktemp -d) && cat > \"\$DIR/l.json\" && couchdb-backup -r -H localhost -d \"l\" -f \"\$DIR/l.json\" -u \"l\" -p \"$password\" && rm -rf \"\$DIR\""
 }
 

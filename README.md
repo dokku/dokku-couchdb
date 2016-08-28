@@ -48,17 +48,25 @@ dokku couchdb:create lolipop
 # fredonas/couchdb image
 export COUCHDB_IMAGE="couchdb"
 export COUCHDB_IMAGE_VERSION="1.5"
+dokku couchdb:create lolipop
 
 # you can also specify custom environment
 # variables to start the couchdb service
 # in semi-colon separated forma
 export COUCHDB_CUSTOM_ENV="USER=alpha;HOST=beta"
-
-# create a couchdb service
 dokku couchdb:create lolipop
 
 # get connection information as follows
 dokku couchdb:info lolipop
+
+# you can also retrieve a specific piece of service info via flags
+dokku couchdb:info lolipop --config-dir
+dokku couchdb:info lolipop --data-dir
+dokku couchdb:info lolipop --dsn
+dokku couchdb:info lolipop --exposed-ports
+dokku couchdb:info lolipop --links
+dokku couchdb:info lolipop --status
+dokku couchdb:info lolipop --version
 
 # a couchdb service can be linked to a
 # container this will use native docker

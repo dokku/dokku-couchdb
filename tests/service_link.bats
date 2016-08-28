@@ -40,7 +40,7 @@ teardown() {
 @test "($PLUGIN_COMMAND_PREFIX:link) exports COUCHDB_URL to app" {
   dokku "$PLUGIN_COMMAND_PREFIX:link" l my_app
   url=$(dokku config:get my_app COUCHDB_URL)
-  password="$(< "$PLUGIN_DATA_ROOT/l/PASSWORD")"
+  password="$(cat "$PLUGIN_DATA_ROOT/l/PASSWORD")"
   assert_contains "$url" "http://l:$password@dokku-couchdb-l:5984/l"
   dokku "$PLUGIN_COMMAND_PREFIX:unlink" l my_app
 }
