@@ -21,6 +21,7 @@ couchdb:clone <name> <new-name>  Create container <new-name> then copy data from
 couchdb:connect <name>           NOT IMPLEMENTED
 couchdb:create <name>            Create a couchdb service with environment variables
 couchdb:destroy <name>           Delete the service and stop its container if there are no links left
+couchdb:enter <name> [command]   Enter a running couchdb service or run a command
 couchdb:export <name> > <file>   Export a dump of the couchdb service database
 couchdb:expose <name> [port]     Expose a couchdb service on custom port if provided (random port otherwise)
 couchdb:import <name> < <file>   Import a dump into the couchdb service database
@@ -70,6 +71,14 @@ dokku couchdb:info lolipop --links
 dokku couchdb:info lolipop --service-root
 dokku couchdb:info lolipop --status
 dokku couchdb:info lolipop --version
+
+# a bash prompt can be opened against a running service
+# filesystem changes will not be saved to disk
+dokku couchdb:enter lolipop
+
+# you may also run a command directly against the service
+# filesystem changes will not be saved to disk
+dokku couchdb:enter lolipop ls -lah /
 
 # a couchdb service can be linked to a
 # container this will use native docker
