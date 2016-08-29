@@ -21,7 +21,7 @@ teardown() {
 
 @test "($PLUGIN_COMMAND_PREFIX:expose) success when not providing a custom port" {
   run dokku "$PLUGIN_COMMAND_PREFIX:expose" l
-  [[ "${lines[*]}" =~ exposed\ on\ port\(s\)\ [[:digit:]]+ ]]
+  [[ "${lines[*]}" =~ exposed\ on\ port\(s\)\ \[container\-\>host\]\:\ [[:digit:]]+ ]]
 }
 
 @test "($PLUGIN_COMMAND_PREFIX:expose) success when providing a custom port" {
