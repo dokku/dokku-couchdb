@@ -67,6 +67,7 @@ dokku couchdb:info lolipop --exposed-ports
 dokku couchdb:info lolipop --id
 dokku couchdb:info lolipop --internal-ip
 dokku couchdb:info lolipop --links
+dokku couchdb:info lolipop --service-root
 dokku couchdb:info lolipop --status
 dokku couchdb:info lolipop --version
 
