@@ -476,10 +476,9 @@ service_version() {
 update_plugin_scheme_for_app() {
   declare desc="Retrieves the updated plugin scheme"
   declare APP="$1"
-  local DATABASE_SCHEME SCHEME_PREFIX
+  local DATABASE_SCHEME
 
-  SCHEME_PREFIX="$(echo "$PLUGIN_COMMAND_PREFIX" | tr '[:lower:]' '[:upper:]')"
-  DATABASE_SCHEME=$(config_get "$APP" "${SCHEME_PREFIX}_DATABASE_SCHEME" || true)
+  DATABASE_SCHEME=$(config_get "$APP" "${PLUGIN_VARIABLE}_DATABASE_SCHEME" || true)
   PLUGIN_SCHEME=${DATABASE_SCHEME:-$PLUGIN_SCHEME}
 }
 
