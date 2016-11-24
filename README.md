@@ -181,8 +181,6 @@ OR
 
 Datastore backups are supported via AWS S3. The only supported region is `us-east-1`, and using an S3 bucket in another region will result in an error.
 
->
-
 > If you would like to sponsor work to enable support for other regions, please contact [@josegonzalez](http://github.com/josegonzalez/).
 
 Backups can be performed using the backup commands:
@@ -198,6 +196,7 @@ dokku couchdb:backup-deauth lolipop
 dokku couchdb:backup lolipop BUCKET_NAME
 
 # schedule a backup
+# CRON_SCHEDULE is a crontab expression, eg. "0 3 * * *" for each day at 3am
 dokku couchdb:backup-schedule lolipop CRON_SCHEDULE BUCKET_NAME
 
 # remove the scheduled backup from cron
