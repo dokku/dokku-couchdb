@@ -5,6 +5,7 @@ export COUCHDB_ROOT=${COUCHDB_ROOT:="/var/lib/dokku/services/couchdb"}
 export COUCHDB_BACKUP=${COUCHDB_DUMP:="https://raw.githubusercontent.com/danielebailo/couchdb-dump/master/couchdb-backup.sh"}
 
 export PLUGIN_COMMAND_PREFIX="couchdb"
+export PLUGIN_CONFIG_ROOT="${DOKKU_LIB_ROOT}/config/${PLUGIN_COMMAND_PREFIX}"
 export PLUGIN_DATA_ROOT=$COUCHDB_ROOT
 export PLUGIN_DATASTORE_PORTS=(5984)
 export PLUGIN_DATASTORE_WAIT_PORT=5984
