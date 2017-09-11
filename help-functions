@@ -44,13 +44,21 @@ fn-help-all() {
     echo ''
     echo -e "dokku ${BOLD}${PLUGIN_COMMAND_PREFIX}${NORMAL} commands: (get help with ${CYAN}dokku ${PLUGIN_COMMAND_PREFIX}:help SUBCOMMAND${NORMAL})"
     echo ''
+    echo -e "${BOLD}List your $PLUGIN_COMMAND_PREFIX services.${NORMAL}"
+    echo ''
+    echo -e "${BLUE}Example:${NORMAL}"
+    echo ''
+    echo "    \$ dokku $PLUGIN_COMMAND_PREFIX:list"
+    echo ''
+    fn-help-list-example | column -c5 -t -s,
+    echo ''
     fn-help-contents | sort | column -c2 -t -s,
     echo ''
   elif [[ $(ps -o command= $PPID) == *"--all"* ]]; then
     fn-help-contents
   else
     cat<<help_desc
-    $PLUGIN_COMMAND_PREFIX, Plugin for managing a global certificate
+    $PLUGIN_COMMAND_PREFIX, Plugin for managing $PLUGIN_SERVICE services
 help_desc
   fi
 
@@ -140,6 +148,15 @@ fn-help-is-subcommand-unimplemented() {
   else
     echo false
   fi
+}
+
+fn-help-list-example() {
+  # shellcheck disable=SC2034
+  declare desc="return $PLUGIN_COMMAND_PREFIX plugin help content"
+  cat<<help_list
+      NAME, VERSION, STATUS, EXPOSED PORTS, LINKS
+      service-name, $PLUGIN_COMMAND_PREFIX:$PLUGIN_IMAGE_VERSION, running, -, app-name
+help_list
 }
 
 fn-help-subcommand-args() {
