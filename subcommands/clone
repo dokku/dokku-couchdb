@@ -33,9 +33,9 @@ service-clone-cmd() {
     if [[ ! "$STDOUT1" = *"${succ_str}" ]]; then
       if [ $attemptcount = $attempts ]; then
         R=1
-        echo -e "\nERROR: CouchDB Import failed - Stopping\n"
+        dokku_log_fail "ERROR: CouchDB Import failed - Stopping"
       else
-        echo -e "\nWARN: CouchDB Import Reported an error - Attempt ${attemptcount}/${attempts} - Retrying...\n"
+        dokku_log_warn "CouchDB Import Reported an error - Attempt ${attemptcount}/${attempts} - Retrying..."
         sleep 1
       fi
     else
