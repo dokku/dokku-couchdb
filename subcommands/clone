@@ -23,27 +23,12 @@ service-clone-cmd() {
   service_create "$NEW_SERVICE" "${@:3}"
   dokku_log_info1 "Copying data from $SERVICE to $NEW_SERVICE"
 
-  attempts=5
-  attemptcount=0
-  R=2
   succ_str=' Successfully.'
-  until [[ $R = 0 || $R = 1 ]]; do
-    attemptcount=$((attemptcount+1))
-    STDOUT1=$(service_export "$SERVICE" | service_import "$NEW_SERVICE" 2>&1) || true
-    if [[ ! "$STDOUT1" = *"${succ_str}" ]]; then
-      if [ $attemptcount = $attempts ]; then
-        R=1
-        dokku_log_fail "ERROR: CouchDB Import failed - Stopping"
-      else
-        dokku_log_warn "CouchDB Import Reported an error - Attempt ${attemptcount}/${attempts} - Retrying..."
-        sleep 1
-      fi
-    else
-      R=0
-    fi
-  done
+  STDOUT1=$(service_export "$SERVICE" | service_import "$NEW_SERVICE" 2>&1) || true
+  if [[ ! "$STDOUT1" = *"${succ_str}" ]]; then
+    dokku_log_fail "ERROR: CouchDB Import failed - Stopping"
+  fi
   dokku_log_info1 "Done"
-  exit $R
 }
 
 service-clone-cmd "$@"
