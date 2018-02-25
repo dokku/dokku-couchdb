@@ -29,11 +29,13 @@ couchdb:connect <name>           NOT IMPLEMENTED
 couchdb:create <name>            Create a couchdb service with environment variables
 couchdb:destroy <name>           Delete the service, delete the data and stop its container if there are no links left
 couchdb:enter <name> [command]   Enter or run a command in a running couchdb service container
+couchdb:exists <service>         Check if the couchdb service exists
 couchdb:export <name> > <file>   Export a dump of the couchdb service database
 couchdb:expose <name> [port]     Expose a couchdb service on custom port if provided (random port otherwise)
 couchdb:import <name> < <file>   Import a dump into the couchdb service database
 couchdb:info <name>              Print the connection information
 couchdb:link <name> <app>        Link the couchdb service to the app
+couchdb:linked <name> <app>      Check if the couchdb service is linked to an app
 couchdb:list                     List all couchdb services
 couchdb:logs <name> [-t]         Print the most recent log(s) for this service
 couchdb:promote <name> <app>     Promote service <name> as COUCHDB_URL in <app>
