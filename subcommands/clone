@@ -22,7 +22,12 @@ service-clone-cmd() {
 
   service_create "$NEW_SERVICE" "${@:3}"
   dokku_log_info1 "Copying data from $SERVICE to $NEW_SERVICE"
-  service_export "$SERVICE" | service_import "$NEW_SERVICE" > /dev/null 2>&1 || true
+
+  succ_str=' Successfully.'
+  STDOUT1=$(service_export "$SERVICE" | service_import "$NEW_SERVICE" 2>&1) || true
+  if [[ ! "$STDOUT1" = *"${succ_str}" ]]; then
+    dokku_log_fail "ERROR: CouchDB Import failed - Stopping"
+  fi
   dokku_log_info1 "Done"
 }
 
