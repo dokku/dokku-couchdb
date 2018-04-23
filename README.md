@@ -21,9 +21,10 @@ couchdb:backup <name> <bucket> (--use-iam) Create a backup of the couchdb servic
 couchdb:backup-auth <name> <aws_access_key_id> <aws_secret_access_key> (<aws_default_region>) (<aws_signature_version>) (<endpoint_url>) Sets up authentication for backups on the couchdb service
 couchdb:backup-deauth <name>     Removes backup authentication for the couchdb service
 couchdb:backup-schedule <name> <schedule> <bucket> Schedules a backup of the couchdb service
-couchdb:backup-set-encryption <name> <encryption_key>, Sets up GPG encryption for future backups of the couchdb service
+couchdb:backup-schedule-cat <name> Cat the contents of the configured backup cronfile for the service
+couchdb:backup-set-encryption <name> <encryption_key> Sets up GPG encryption for future backups of the couchdb service
 couchdb:backup-unschedule <name> Unschedules the backup of the couchdb service
-couchdb:backup-unset-encryption <name>, Removes backup encryption for future backups of the couchdb service
+couchdb:backup-unset-encryption <name> Removes backup encryption for future backups of the couchdb service
 couchdb:clone <name> <new-name>  Create container <new-name> then copy data from <name> into <new-name>
 couchdb:connect <name>           NOT IMPLEMENTED
 couchdb:create <name>            Create a couchdb service with environment variables
@@ -204,6 +205,9 @@ dokku couchdb:backup lolipop BUCKET_NAME
 # schedule a backup
 # CRON_SCHEDULE is a crontab expression, eg. "0 3 * * *" for each day at 3am
 dokku couchdb:backup-schedule lolipop CRON_SCHEDULE BUCKET_NAME
+
+# cat the contents of the configured backup cronfile for the service
+dokku couchdb:backup-schedule-cat lolipop
 
 # remove the scheduled backup from cron
 dokku couchdb:backup-unschedule lolipop
