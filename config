@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-export COUCHDB_IMAGE=${COUCHDB_IMAGE:="frodenas/couchdb"}
-export COUCHDB_IMAGE_VERSION=${COUCHDB_IMAGE_VERSION:="1.6"}
+export COUCHDB_IMAGE=${COUCHDB_IMAGE:="couchdb"}
+export COUCHDB_IMAGE_VERSION=${COUCHDB_IMAGE_VERSION:="1.7"}
 export COUCHDB_ROOT=${COUCHDB_ROOT:="/var/lib/dokku/services/couchdb"}
 export COUCHDB_HOST_ROOT=${COUCHDB_HOST_ROOT:=$COUCHDB_ROOT}
 

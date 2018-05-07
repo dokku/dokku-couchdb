@@ -1,6 +1,6 @@
 # dokku couchdb [![Build Status](https://img.shields.io/travis/dokku/dokku-couchdb.svg?branch=master "Build Status")](https://travis-ci.org/dokku/dokku-couchdb) [![IRC Network](https://img.shields.io/badge/irc-freenode-blue.svg "IRC Freenode")](https://webchat.freenode.net/?channels=dokku)
 
-Official CouchDB plugin for dokku. Currently defaults to installing [CouchDB 1.6](https://hub.docker.com/r/frodenas/couchdb/).
+Official CouchDB plugin for dokku. Currently defaults to installing [CouchDB 1.7](https://hub.docker.com/_/couchdb/).
 
 ## requirements
 
@@ -56,9 +56,9 @@ dokku couchdb:create lolipop
 # you can also specify the image and image
 # version to use for the service
 # it *must* be compatible with the
-# fredonas/couchdb image
+# couchdb image
 export COUCHDB_IMAGE="couchdb"
-export COUCHDB_IMAGE_VERSION="1.5"
+export COUCHDB_IMAGE_VERSION="1.7"
 dokku couchdb:create lolipop
 
 # you can also specify custom environment
