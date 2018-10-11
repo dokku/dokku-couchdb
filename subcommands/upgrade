@@ -38,6 +38,7 @@ service-upgrade-cmd() {
   if [[ "$SERVICE_RESTART_APPS" == "true" ]]; then
     dokku_log_info2 "Stopping all linked services"
     for app in $(service_linked_apps "$SERVICE"); do
+      [[ "$app" == "-" ]] && continue
       ps_stop "$app"
     done
   fi
@@ -49,6 +50,7 @@ service-upgrade-cmd() {
   if [[ "$SERVICE_RESTART_APPS" == "true" ]]; then
     dokku_log_info2 "Starting all linked services"
     for app in $(service_linked_apps "$SERVICE"); do
+      [[ "$app" == "-" ]] && continue
       ps_start "$app"
     done
   fi
