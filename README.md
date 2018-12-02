@@ -23,7 +23,7 @@ couchdb:backup-auth <name> <aws_access_key_id> <aws_secret_access_key> (<aws_def
 couchdb:backup-deauth <name>     Removes backup authentication for the couchdb service
 couchdb:backup-schedule <name> <schedule> <bucket> Schedules a backup of the couchdb service
 couchdb:backup-schedule-cat <name> Cat the contents of the configured backup cronfile for the service
-couchdb:backup-set-encryption <name> <encryption_key> Sets up GPG encryption for future backups of the couchdb service
+couchdb:backup-set-encryption <name> <passphrase> Set a GPG passphrase for backups
 couchdb:backup-unschedule <name> Unschedules the backup of the couchdb service
 couchdb:backup-unset-encryption <name> Removes backup encryption for future backups of the couchdb service
 couchdb:clone <name> <new-name>  Create container <new-name> then copy data from <name> into <new-name>
