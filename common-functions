@@ -737,7 +737,7 @@ is_valid_service_name() {
   declare SERVICE="$1"
   [[ -z "$SERVICE" ]] && dokku_log_fail "SERVICE must not be null"
 
-  if [[ "$APP" =~ ^[A-Za-z0-9_]+$ ]]; then
+  if [[ "$SERVICE" =~ ^[A-Za-z0-9_]+$ ]]; then
     return 0
   fi
 
