@@ -89,8 +89,10 @@ remove_from_links_file() {
   local SERVICE_ROOT="$PLUGIN_DATA_ROOT/$SERVICE"
   local LINKS_FILE="$SERVICE_ROOT/LINKS"
 
-  mkdir -p "$SERVICE_ROOT" || dokku_log_fail "Unable to create service directory"
-  touch "$LINKS_FILE"
+  if [[ ! -f "$LINKS_FILE" ]]; then
+    return
+  fi
+
   sed -i.bak "/^$APP\$/d" "$LINKS_FILE" && rm "$LINKS_FILE.bak"
   sort "$LINKS_FILE" -u -o "$LINKS_FILE"
 }
