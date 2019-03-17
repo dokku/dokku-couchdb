@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
-set -eo pipefail; [[ $DOKKU_TRACE ]] && set -x
+set -eo pipefail; [[ $TRACE ]] && set -x
 wget https://raw.githubusercontent.com/dokku/dokku/master/bootstrap.sh
 if [[ "$DOKKU_VERSION" == "master" ]]; then
-  sudo TRACE=1 bash bootstrap.sh
+  sudo bash bootstrap.sh
 else
-  sudo DOKKU_TAG="$DOKKU_VERSION" TRACE=1 bash bootstrap.sh
+  sudo DOKKU_TAG="$DOKKU_VERSION" bash bootstrap.sh
 fi
 echo "Dokku version $DOKKU_VERSION"
 
-export PLUGIN_COMMAND_PREFIX="couchdb"
+set -x
 export DOKKU_ROOT="~dokku"
 source "$(dirname "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)")/config"
 rm -rf "$DOKKU_ROOT/plugins/$PLUGIN_COMMAND_PREFIX"
