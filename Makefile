@@ -56,7 +56,9 @@ lint: lint-setup
 
 unit-tests:
 	@echo running unit tests...
-	@$(QUIET) bats tests
+	@mkdir -p test-results/bats
+	@cd tests && echo "executing tests: $(shell cd tests/unit ; ls *.bats | xargs)"
+	cd tests && bats --formatter bats-format-junit -e -T -o ../test-results/bats *.bats
 
 setup:
 	bash tests/setup.sh
