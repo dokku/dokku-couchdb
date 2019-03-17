@@ -19,7 +19,7 @@ assert_equal() {
 }
 
 assert_exit_status() {
-  assert_equal "$status" "$1"
+  assert_equal "$1" "$status"
 }
 
 assert_success() {
