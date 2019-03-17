@@ -15,5 +15,6 @@ sudo rm -rf "$DOKKU_PLUGINS_ROOT/$PLUGIN_COMMAND_PREFIX"
 sudo mkdir -p "$DOKKU_PLUGINS_ROOT/$PLUGIN_COMMAND_PREFIX" "$DOKKU_PLUGINS_ROOT/$PLUGIN_COMMAND_PREFIX/subcommands"
 sudo find ./ -maxdepth 1 -type f -exec cp '{}' "$DOKKU_PLUGINS_ROOT/$PLUGIN_COMMAND_PREFIX" \;
 sudo find ./subcommands -maxdepth 1 -type f -exec cp '{}' "$DOKKU_PLUGINS_ROOT/$PLUGIN_COMMAND_PREFIX/subcommands" \;
-ls -lah "$DOKKU_PLUGINS_ROOT/$PLUGIN_COMMAND_PREFIX"
+sudo mkdir "$PLUGIN_CONFIG_ROOT" "$PLUGIN_DATA_ROOT"
 sudo dokku plugin:enable "$PLUGIN_COMMAND_PREFIX"
+sudo dokku plugin:install
