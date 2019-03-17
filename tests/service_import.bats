@@ -14,21 +14,23 @@ teardown() {
 @test "($PLUGIN_COMMAND_PREFIX:import) error when there are no arguments" {
   run dokku "$PLUGIN_COMMAND_PREFIX:import"
   assert_contains "${lines[*]}" "Please specify a valid name for the service"
+  assert_failure
 }
 
 @test "($PLUGIN_COMMAND_PREFIX:import) error when service does not exist" {
   run dokku "$PLUGIN_COMMAND_PREFIX:import" not_existing_service
   assert_contains "${lines[*]}" "service not_existing_service does not exist"
+  assert_failure
 }
 
 @test "($PLUGIN_COMMAND_PREFIX:import) error when data is not provided" {
   run dokku "$PLUGIN_COMMAND_PREFIX:import" l
   assert_contains "${lines[*]}" "No data provided on stdin"
+  assert_failure
 }
 
 @test "($PLUGIN_COMMAND_PREFIX:import) success" {
   run dokku "$PLUGIN_COMMAND_PREFIX:import" l < "/tmp/fake.json"
   password="$(sudo cat "$PLUGIN_DATA_ROOT/l/PASSWORD")"
-  assert_contains "${lines[-1]}" "docker exec -i dokku.couchdb.l bash -c DIR=\$(mktemp -d) && cat > \"\$DIR/l.json\" && couchdb-backup -r -H localhost -d \"l\" -f \"\$DIR/l.json\" -u \"l\" -p \"$password\" && rm -rf \"\$DIR\""
+  assert_success
 }
-
