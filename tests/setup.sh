@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
 set -eo pipefail; [[ $DOKKU_TRACE ]] && set -x
-export PLUGIN_COMMAND_PREFIX="couchdb"
-export DOKKU_ROOT="~dokku"
-
 wget https://raw.githubusercontent.com/dokku/dokku/master/bootstrap.sh
 if [[ "$DOKKU_VERSION" == "master" ]]; then
   sudo bash bootstrap.sh
@@ -11,6 +8,8 @@ else
 fi
 echo "Dokku version $DOKKU_VERSION"
 
+export PLUGIN_COMMAND_PREFIX="couchdb"
+export DOKKU_ROOT="~dokku"
 source "$(dirname "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)")/config"
 rm -rf "$DOKKU_ROOT/plugins/$PLUGIN_COMMAND_PREFIX"
 mkdir -p "$DOKKU_ROOT/plugins/$PLUGIN_COMMAND_PREFIX" "$DOKKU_ROOT/plugins/$PLUGIN_COMMAND_PREFIX/subcommands"
