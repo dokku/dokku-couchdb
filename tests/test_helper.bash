@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+export DOKKU_LIB_ROOT="/var/lib/dokku"
+source "$(dirname "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)")/config"
+
 flunk() {
   { if [ "$#" -eq 0 ]; then cat -
     else echo "$*"
