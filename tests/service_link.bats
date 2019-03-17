@@ -50,6 +50,8 @@ teardown() {
   echo "status: $status"
   assert_contains "${lines[*]}" "Already linked as COUCHDB_URL"
   assert_failure
+
+  dokku "$PLUGIN_COMMAND_PREFIX:unlink" l my_app
 }
 
 @test "($PLUGIN_COMMAND_PREFIX:link) exports COUCHDB_URL to app" {
