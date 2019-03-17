@@ -11,7 +11,7 @@ echo "Dokku version $DOKKU_VERSION"
 set -x
 export DOKKU_LIB_ROOT="/var/lib/dokku"
 source "$(dirname "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)")/config"
-rm -rf "$DOKKU_LIB_ROOT/plugins/$PLUGIN_COMMAND_PREFIX"
-mkdir -p "$DOKKU_LIB_ROOT/plugins/$PLUGIN_COMMAND_PREFIX" "$DOKKU_LIB_ROOT/plugins/$PLUGIN_COMMAND_PREFIX/subcommands"
-find ./ -maxdepth 1 -type f -exec cp '{}' "$DOKKU_LIB_ROOT/plugins/$PLUGIN_COMMAND_PREFIX" \;
-find ./subcommands -maxdepth 1 -type f -exec cp '{}' "$DOKKU_LIB_ROOT/plugins/$PLUGIN_COMMAND_PREFIX/subcommands" \;
+sudo rm -rf "$DOKKU_LIB_ROOT/plugins/$PLUGIN_COMMAND_PREFIX"
+sudo mkdir -p "$DOKKU_LIB_ROOT/plugins/$PLUGIN_COMMAND_PREFIX" "$DOKKU_LIB_ROOT/plugins/$PLUGIN_COMMAND_PREFIX/subcommands"
+find ./ -maxdepth 1 -type f -exec sudo 'cp {}' "$DOKKU_LIB_ROOT/plugins/$PLUGIN_COMMAND_PREFIX" \;
+find ./subcommands -maxdepth 1 -type f -exec sudo 'cp {}' "$DOKKU_LIB_ROOT/plugins/$PLUGIN_COMMAND_PREFIX/subcommands" \;
