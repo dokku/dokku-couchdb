@@ -2,7 +2,7 @@ dist: trusty
 language: bash
 env:
   - DOKKU_VERSION=master
-  - DOKKU_VERSION=v0.14.0
-  - DOKKU_VERSION=v0.12.0
+  # - DOKKU_VERSION=v0.14.0
+  # - DOKKU_VERSION=v0.12.0
 install: PLUGIN_COMMAND_PREFIX=$(echo "$TRAVIS_REPO_SLUG" | cut -d'-' -f2-)  make setup
 script: PLUGIN_COMMAND_PREFIX=$(echo "$TRAVIS_REPO_SLUG" | cut -d'-' -f2-) make test
