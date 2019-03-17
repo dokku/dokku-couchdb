@@ -2,12 +2,10 @@
 load test_helper
 
 setup() {
-  export ECHO_DOCKER_COMMAND="false"
   dokku "$PLUGIN_COMMAND_PREFIX:create" l >&2
 }
 
 teardown() {
-  export ECHO_DOCKER_COMMAND="false"
   dokku --force "$PLUGIN_COMMAND_PREFIX:destroy" l >&2
 }
 
@@ -22,7 +20,6 @@ teardown() {
 }
 
 @test "($PLUGIN_COMMAND_PREFIX:export) success with SSH_TTY" {
-  export ECHO_DOCKER_COMMAND="true"
   export SSH_TTY=`tty`
   run dokku "$PLUGIN_COMMAND_PREFIX:export" l
   echo "output: $output"
@@ -33,7 +30,6 @@ teardown() {
 }
 
 @test "($PLUGIN_COMMAND_PREFIX:export) success without SSH_TTY" {
-  export ECHO_DOCKER_COMMAND="true"
   unset SSH_TTY
   run dokku "$PLUGIN_COMMAND_PREFIX:export" l
   echo "output: $output"

@@ -2,12 +2,10 @@
 load test_helper
 
 setup() {
-  export ECHO_DOCKER_COMMAND="false"
   dokku "$PLUGIN_COMMAND_PREFIX:create" l >&2
 }
 
 teardown() {
-  export ECHO_DOCKER_COMMAND="false"
   dokku --force "$PLUGIN_COMMAND_PREFIX:destroy" l >&2
 }
 
