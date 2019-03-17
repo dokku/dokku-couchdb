@@ -9,9 +9,9 @@ fi
 echo "Dokku version $DOKKU_VERSION"
 
 set -x
-export DOKKU_LIB_ROOT="/var/lib/dokku"
+export DOKKU_PLUGINS_ROOT="/var/lib/dokku/plugins/enabled"
 source "$(dirname "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)")/config"
-sudo rm -rf "$DOKKU_LIB_ROOT/plugins/$PLUGIN_COMMAND_PREFIX"
-sudo mkdir -p "$DOKKU_LIB_ROOT/plugins/$PLUGIN_COMMAND_PREFIX" "$DOKKU_LIB_ROOT/plugins/$PLUGIN_COMMAND_PREFIX/subcommands"
-sudo find ./ -maxdepth 1 -type f -exec cp '{}' "$DOKKU_LIB_ROOT/plugins/$PLUGIN_COMMAND_PREFIX" \;
-sudo find ./subcommands -maxdepth 1 -type f -exec cp '{}' "$DOKKU_LIB_ROOT/plugins/$PLUGIN_COMMAND_PREFIX/subcommands" \;
+sudo rm -rf "$DOKKU_PLUGINS_ROOT/$PLUGIN_COMMAND_PREFIX"
+sudo mkdir -p "$DOKKU_PLUGINS_ROOT/$PLUGIN_COMMAND_PREFIX" "$DOKKU_PLUGINS_ROOT/$PLUGIN_COMMAND_PREFIX/subcommands"
+sudo find ./ -maxdepth 1 -type f -exec cp '{}' "$DOKKU_PLUGINS_ROOT/$PLUGIN_COMMAND_PREFIX" \;
+sudo find ./subcommands -maxdepth 1 -type f -exec cp '{}' "$DOKKU_PLUGINS_ROOT/$PLUGIN_COMMAND_PREFIX/subcommands" \;
