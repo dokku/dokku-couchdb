@@ -4,7 +4,7 @@ wget https://raw.githubusercontent.com/dokku/dokku/master/bootstrap.sh
 if [[ "$DOKKU_VERSION" == "master" ]]; then
   sudo bash bootstrap.sh
 else
-  sudo DOKKU_TAG="$DOKKU_VERSION" bash bootstrap.sh
+  sudo DOKKU_TAG="$DOKKU_VERSION" TRACE=1 bash bootstrap.sh
 fi
 echo "Dokku version $DOKKU_VERSION"
 
