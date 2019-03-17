@@ -9,9 +9,11 @@ fi
 echo "Dokku version $DOKKU_VERSION"
 
 set -x
-export DOKKU_PLUGINS_ROOT="/var/lib/dokku/plugins/enabled"
+export DOKKU_PLUGINS_ROOT="/var/lib/dokku/plugins/available"
 source "$(dirname "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)")/config"
 sudo rm -rf "$DOKKU_PLUGINS_ROOT/$PLUGIN_COMMAND_PREFIX"
 sudo mkdir -p "$DOKKU_PLUGINS_ROOT/$PLUGIN_COMMAND_PREFIX" "$DOKKU_PLUGINS_ROOT/$PLUGIN_COMMAND_PREFIX/subcommands"
 sudo find ./ -maxdepth 1 -type f -exec cp '{}' "$DOKKU_PLUGINS_ROOT/$PLUGIN_COMMAND_PREFIX" \;
 sudo find ./subcommands -maxdepth 1 -type f -exec cp '{}' "$DOKKU_PLUGINS_ROOT/$PLUGIN_COMMAND_PREFIX/subcommands" \;
+ls -lah "$DOKKU_PLUGINS_ROOT/$PLUGIN_COMMAND_PREFIX"
+sudo dokku plugin:enable "$PLUGIN_COMMAND_PREFIX"
