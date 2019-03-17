@@ -71,7 +71,7 @@ service_create_container() {
 
   local CONTAINER_IP="$(get_container_ip "${ID}")"
   local STATUS_CODE="$(curl -X PUT -u "${SERVICE}:${PASSWORD}" -s -o /dev/null -w "%{http_code}" "http://$CONTAINER_IP:5984/$SERVICE")"
-  if [[ "$STATUS_CODE" == "200" ]] || [[ "$STATUS_CODE" == "412" ]]; then
+  if [[ "$STATUS_CODE" == "201" ]] || [[ "$STATUS_CODE" == "412" ]]; then
     dokku_log_info2 "$PLUGIN_SERVICE container created: $SERVICE"
   else
     dokku_log_warn "$PLUGIN_SERVICE failed to create database in container: $SERVICE ($STATUS_CODE)"
