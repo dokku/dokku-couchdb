@@ -31,6 +31,7 @@ teardown() {
 
 @test "($PLUGIN_COMMAND_PREFIX:import) success" {
   run dokku "$PLUGIN_COMMAND_PREFIX:import" l < "/tmp/fake.json"
-  password="$(sudo cat "$PLUGIN_DATA_ROOT/l/PASSWORD")"
+  echo "output: $output"
+  echo "status: $status"
   assert_success
 }
