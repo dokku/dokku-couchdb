@@ -74,7 +74,7 @@ service_create_container() {
   if [[ "$STATUS_CODE" == "200" ]] || [[ "$STATUS_CODE" == "412" ]]; then
     dokku_log_info2 "$PLUGIN_SERVICE container created: $SERVICE"
   else
-    dokku_log_warn "$PLUGIN_SERVICE failed to create database in container: $SERVICE"
+    dokku_log_warn "$PLUGIN_SERVICE failed to create database in container: $SERVICE ($STATUS_CODE)"
   fi
   service_info "$SERVICE"
 }
