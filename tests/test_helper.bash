@@ -1,28 +1,4 @@
 #!/usr/bin/env bash
-export DOKKU_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/dokku"
-export DOKKU_VERSION=${DOKKU_VERSION:-"master"}
-export PATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/bin:$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/dokku:$PATH"
-export PLUGIN_COMMAND_PREFIX="couchdb"
-export PLUGIN_PATH="$DOKKU_ROOT/plugins"
-export PLUGIN_ENABLED_PATH="$PLUGIN_PATH"
-export PLUGIN_AVAILABLE_PATH="$PLUGIN_PATH"
-export PLUGIN_CORE_AVAILABLE_PATH="$PLUGIN_PATH"
-export COUCHDB_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/fixtures"
-export PLUGIN_DATA_ROOT="$COUCHDB_ROOT"
-export PLUGIN_CONFIG_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/config"
-export DOKKU_LIB_PATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/lib-root"
-if [[ "$(uname)" == "Darwin" ]]; then
-  export PLUGN_URL="https://github.com/dokku/plugn/releases/download/v0.3.0/plugn_0.3.0_darwin_x86_64.tgz"
-else
-  export PLUGN_URL="https://github.com/dokku/plugn/releases/download/v0.3.0/plugn_0.3.0_linux_x86_64.tgz"
-fi
-
-mkdir -p "$PLUGIN_DATA_ROOT"
-rm -rf "${PLUGIN_DATA_ROOT:?}"/*
-
-mkdir -p "$PLUGIN_CONFIG_ROOT"
-rm -rf "${PLUGIN_CONFIG_ROOT:?}"/*
-
 flunk() {
   { if [ "$#" -eq 0 ]; then cat -
     else echo "$*"
