@@ -3,7 +3,7 @@ load test_helper
 
 setup() {
   dokku "$PLUGIN_COMMAND_PREFIX:create" l
-  echo "data" | tee "/tmp/fake.json"
+  echo '{"new_edits":false,"docs":[]}' | tee "/tmp/fake.json"
 }
 
 teardown() {
