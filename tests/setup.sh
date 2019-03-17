@@ -8,7 +8,6 @@ else
 fi
 echo "Dokku version $DOKKU_VERSION"
 
-set -x
 export DOKKU_PLUGINS_ROOT="/var/lib/dokku/plugins/available"
 export DOKKU_LIB_ROOT="/var/lib/dokku"
 source "$(dirname "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)")/config"
