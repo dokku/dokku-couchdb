@@ -13,35 +13,53 @@ teardown() {
 
 @test "($PLUGIN_COMMAND_PREFIX:link) error when there are no arguments" {
   run dokku "$PLUGIN_COMMAND_PREFIX:link"
+  echo "output: $output"
+  echo "status: $status"
   assert_contains "${lines[*]}" "Please specify a valid name for the service"
+  assert_failure
 }
 
 @test "($PLUGIN_COMMAND_PREFIX:link) error when the app argument is missing" {
   run dokku "$PLUGIN_COMMAND_PREFIX:link" l
+  echo "output: $output"
+  echo "status: $status"
   assert_contains "${lines[*]}" "Please specify an app to run the command on"
+  assert_failure
 }
 
 @test "($PLUGIN_COMMAND_PREFIX:link) error when the app does not exist" {
   run dokku "$PLUGIN_COMMAND_PREFIX:link" l not_existing_app
+  echo "output: $output"
+  echo "status: $status"
   assert_contains "${lines[*]}" "App not_existing_app does not exist"
+  assert_failure
 }
 
 @test "($PLUGIN_COMMAND_PREFIX:link) error when the service does not exist" {
   run dokku "$PLUGIN_COMMAND_PREFIX:link" not_existing_service my_app
+  echo "output: $output"
+  echo "status: $status"
   assert_contains "${lines[*]}" "service not_existing_service does not exist"
+  assert_failure
 }
 
 @test "($PLUGIN_COMMAND_PREFIX:link) error when the service is already linked to app" {
   dokku "$PLUGIN_COMMAND_PREFIX:link" l my_app
   run dokku "$PLUGIN_COMMAND_PREFIX:link" l my_app
+  echo "output: $output"
+  echo "status: $status"
   assert_contains "${lines[*]}" "Already linked as COUCHDB_URL"
+  assert_failure
 }
 
 @test "($PLUGIN_COMMAND_PREFIX:link) exports COUCHDB_URL to app" {
-  dokku "$PLUGIN_COMMAND_PREFIX:link" l my_app
+  run dokku "$PLUGIN_COMMAND_PREFIX:link" l my_app
+  echo "output: $output"
+  echo "status: $status"
   url=$(dokku config:get my_app COUCHDB_URL)
   password="$(sudo cat "$PLUGIN_DATA_ROOT/l/PASSWORD")"
   assert_contains "$url" "http://l:$password@dokku-couchdb-l:5984/l"
+  assert_success
   dokku "$PLUGIN_COMMAND_PREFIX:unlink" l my_app
 }
 
