@@ -4,7 +4,11 @@ export PLUGIN_COMMAND_PREFIX="couchdb"
 export DOKKU_ROOT="~dokku"
 
 wget https://raw.githubusercontent.com/dokku/dokku/master/bootstrap.sh
-sudo DOKKU_TAG="$DOKKU_VERSION" bash bootstrap.sh
+if [[ "$DOKKU_VERSION" == "master" ]]; then
+  sudo bash bootstrap.sh
+else
+  sudo DOKKU_TAG="$DOKKU_VERSION" bash bootstrap.sh
+fi
 echo "Dokku version $DOKKU_VERSION"
 
 source "$(dirname "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)")/config"
