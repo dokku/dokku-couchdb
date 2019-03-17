@@ -20,7 +20,7 @@ teardown() {
 }
 
 @test "($PLUGIN_COMMAND_PREFIX:link) error when the app argument is missing" {
-  run dokku "$PLUGIN_COMMAND_PREFIX:link" l
+  run dokku --trace "$PLUGIN_COMMAND_PREFIX:link" l
   echo "output: $output"
   echo "status: $status"
   assert_contains "${lines[*]}" "Please specify an app to run the command on"
