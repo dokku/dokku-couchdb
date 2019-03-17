@@ -39,7 +39,7 @@ teardown() {
 }
 
 @test "($PLUGIN_COMMAND_PREFIX:promote) changes COUCHDB_URL" {
-  password="$(cat "$PLUGIN_DATA_ROOT/l/PASSWORD")"
+  password="$(sudo cat "$PLUGIN_DATA_ROOT/l/PASSWORD")"
   dokku config:set my_app "COUCHDB_URL=http://u:p@host:5984/db" "DOKKU_COUCHDB_BLUE_URL=http://l:$password@dokku-couchdb-l:5984/l"
   dokku "$PLUGIN_COMMAND_PREFIX:promote" l my_app
   url=$(dokku config:get my_app COUCHDB_URL)
@@ -47,7 +47,7 @@ teardown() {
 }
 
 @test "($PLUGIN_COMMAND_PREFIX:promote) creates new config url when needed" {
-  password="$(cat "$PLUGIN_DATA_ROOT/l/PASSWORD")"
+  password="$(sudo cat "$PLUGIN_DATA_ROOT/l/PASSWORD")"
   dokku config:set my_app "COUCHDB_URL=http://u:p@host:5984/db" "DOKKU_COUCHDB_BLUE_URL=http://l:$password@dokku-couchdb-l:5984/l"
   dokku "$PLUGIN_COMMAND_PREFIX:promote" l my_app
   run dokku config my_app
@@ -55,7 +55,7 @@ teardown() {
 }
 
 @test "($PLUGIN_COMMAND_PREFIX:promote) uses COUCHDB_DATABASE_SCHEME variable" {
-  password="$(cat "$PLUGIN_DATA_ROOT/l/PASSWORD")"
+  password="$(sudo cat "$PLUGIN_DATA_ROOT/l/PASSWORD")"
   dokku config:set my_app "COUCHDB_DATABASE_SCHEME=couchdb2" "COUCHDB_URL=http://u:p@host:5984/db" "DOKKU_COUCHDB_BLUE_URL=couchdb2://l:$password@dokku-couchdb-l:5984/l"
   dokku "$PLUGIN_COMMAND_PREFIX:promote" l my_app
   url=$(dokku config:get my_app COUCHDB_URL)

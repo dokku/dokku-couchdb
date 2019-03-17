@@ -40,7 +40,7 @@ teardown() {
 @test "($PLUGIN_COMMAND_PREFIX:link) exports COUCHDB_URL to app" {
   dokku "$PLUGIN_COMMAND_PREFIX:link" l my_app
   url=$(dokku config:get my_app COUCHDB_URL)
-  password="$(cat "$PLUGIN_DATA_ROOT/l/PASSWORD")"
+  password="$(sudo cat "$PLUGIN_DATA_ROOT/l/PASSWORD")"
   assert_contains "$url" "http://l:$password@dokku-couchdb-l:5984/l"
   dokku "$PLUGIN_COMMAND_PREFIX:unlink" l my_app
 }
@@ -64,7 +64,7 @@ teardown() {
   dokku config:set my_app COUCHDB_DATABASE_SCHEME=couchdb2
   dokku "$PLUGIN_COMMAND_PREFIX:link" l my_app
   url=$(dokku config:get my_app COUCHDB_URL)
-  password="$(cat "$PLUGIN_DATA_ROOT/l/PASSWORD")"
+  password="$(sudo cat "$PLUGIN_DATA_ROOT/l/PASSWORD")"
   assert_contains "$url" "couchdb2://l:$password@dokku-couchdb-l:5984/l"
   dokku "$PLUGIN_COMMAND_PREFIX:unlink" l my_app
 }
@@ -79,7 +79,7 @@ teardown() {
 @test "($PLUGIN_COMMAND_PREFIX:link) uses a specified config url when alias is specified" {
   dokku "$PLUGIN_COMMAND_PREFIX:link" l my_app --alias "ALIAS"
   url=$(dokku config:get my_app ALIAS_URL)
-  password="$(cat "$PLUGIN_DATA_ROOT/l/PASSWORD")"
+  password="$(sudo cat "$PLUGIN_DATA_ROOT/l/PASSWORD")"
   assert_contains "$url" "http://l:$password@dokku-couchdb-l:5984/l"
   dokku "$PLUGIN_COMMAND_PREFIX:unlink" l my_app
 }

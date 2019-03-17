@@ -21,7 +21,7 @@ teardown() {
 
 @test "($PLUGIN_COMMAND_PREFIX:info) success" {
   run dokku "$PLUGIN_COMMAND_PREFIX:info" l
-  local password="$(cat "$PLUGIN_DATA_ROOT/l/PASSWORD")"
+  local password="$(sudo cat "$PLUGIN_DATA_ROOT/l/PASSWORD")"
   assert_contains "${lines[*]}" "http://l:$password@dokku-couchdb-l:5984/l"
 }
 
@@ -35,7 +35,7 @@ teardown() {
 
 @test "($PLUGIN_COMMAND_PREFIX:info) success with flag" {
   run dokku "$PLUGIN_COMMAND_PREFIX:info" l --dsn
-  local password="$(cat "$PLUGIN_DATA_ROOT/l/PASSWORD")"
+  local password="$(sudo cat "$PLUGIN_DATA_ROOT/l/PASSWORD")"
   assert_output "http://l:$password@dokku-couchdb-l:5984/l"
 
   run dokku "$PLUGIN_COMMAND_PREFIX:info" l --config-dir
