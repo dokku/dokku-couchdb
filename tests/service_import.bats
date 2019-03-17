@@ -3,12 +3,12 @@ load test_helper
 
 setup() {
   dokku "$PLUGIN_COMMAND_PREFIX:create" l >&2
-  echo "data" > "$PLUGIN_DATA_ROOT/fake.json"
+  echo "data" | tee "/tmp/fake.json"
 }
 
 teardown() {
   dokku --force "$PLUGIN_COMMAND_PREFIX:destroy" l >&2
-  rm -f "$PLUGIN_DATA_ROOT/fake.json"
+  rm -f "/tmp/fake.json"
 }
 
 @test "($PLUGIN_COMMAND_PREFIX:import) error when there are no arguments" {
@@ -27,7 +27,7 @@ teardown() {
 }
 
 @test "($PLUGIN_COMMAND_PREFIX:import) success" {
-  run dokku "$PLUGIN_COMMAND_PREFIX:import" l < "$PLUGIN_DATA_ROOT/fake.json"
+  run dokku "$PLUGIN_COMMAND_PREFIX:import" l < "/tmp/fake.json"
   password="$(sudo cat "$PLUGIN_DATA_ROOT/l/PASSWORD")"
   assert_contains "${lines[-1]}" "docker exec -i dokku.couchdb.l bash -c DIR=\$(mktemp -d) && cat > \"\$DIR/l.json\" && couchdb-backup -r -H localhost -d \"l\" -f \"\$DIR/l.json\" -u \"l\" -p \"$password\" && rm -rf \"\$DIR\""
 }
