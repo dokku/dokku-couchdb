@@ -63,13 +63,19 @@ service_create_container() {
   local SERVICE_HOST_ROOT="$PLUGIN_DATA_HOST_ROOT/$SERVICE"
   local SERVICE_NAME="$(get_service_name "$SERVICE")"
 
-  ID=$(docker run --name "$SERVICE_NAME" -v "$SERVICE_HOST_ROOT/data:/data" -e "COUCHDB_USERNAME=$SERVICE" -e "COUCHDB_PASSWORD=$PASSWORD" -e "COUCHDB_DBNAME=$SERVICE" --env-file="$SERVICE_ROOT/ENV" -d --restart always --label dokku=service --label "dokku.service=$PLUGIN_COMMAND_PREFIX" "$PLUGIN_IMAGE:$PLUGIN_IMAGE_VERSION")
+  ID=$(docker run --name "$SERVICE_NAME" -v "$SERVICE_HOST_ROOT/data:/data" -e "COUCHDB_USER=$SERVICE" -e "COUCHDB_PASSWORD=$PASSWORD" -e "COUCHDB_DBNAME=$SERVICE" --env-file="$SERVICE_ROOT/ENV" -d --restart always --label dokku=service --label "dokku.service=$PLUGIN_COMMAND_PREFIX" "$PLUGIN_IMAGE:$PLUGIN_IMAGE_VERSION")
   echo "$ID" > "$SERVICE_ROOT/ID"
 
   dokku_log_verbose_quiet "Waiting for container to be ready"
   docker run --rm --link "$SERVICE_NAME:$PLUGIN_COMMAND_PREFIX" dokkupaas/wait:0.2 -p "$PLUGIN_DATASTORE_WAIT_PORT" > /dev/null
 
-  dokku_log_info2 "$PLUGIN_SERVICE container created: $SERVICE"
+  local CONTAINER_IP="$(get_container_ip "${ID}")"
+  local STATUS_CODE="$(curl -X PUT -u "${SERVICE}:${PASSWORD}" -s -o /dev/null -w "%{http_code}" "http://$CONTAINER_IP:5984/$SERVICE")"
+  if [[ "$STATUS_CODE" == "200" ]] || [[ "$STATUS_CODE" == "412" ]]; then
+    dokku_log_info2 "$PLUGIN_SERVICE container created: $SERVICE"
+  else
+    dokku_log_warn "$PLUGIN_SERVICE failed to create database in container: $SERVICE"
+  fi
   service_info "$SERVICE"
 }
 
@@ -81,7 +87,7 @@ service_export() {
 
   [[ -n $SSH_TTY ]] && stty -opost
   docker exec "$SERVICE_NAME" bash -c "[[ ! -f /usr/local/bin/couchdb-backup ]] && curl $COUCHDB_BACKUP -s -o /usr/local/bin/couchdb-backup && chmod +x /usr/local/bin/couchdb-backup" || true
-  docker exec "$SERVICE_NAME" bash -c "DIR=\$(mktemp -d) && couchdb-backup -b -H localhost -d \"$SERVICE\" -f \"\$DIR/$SERVICE.json\" -u \"$SERVICE\" -p \"$PASSWORD\" > /dev/null && cat \"\$DIR/$SERVICE.json\" && rm -rf \"\$DIR\""
+  docker exec "$SERVICE_NAME" bash -c "DIR=\$(mktemp -d) && couchdb-backup -b -H localhost -d \"$SERVICE\" -f \"\$DIR/$SERVICE.json\" -u \"$SERVICE\" -p \"$PASSWORD\" > /dev/null 2>&1 && cat \"\$DIR/$SERVICE.json\" && rm -rf \"\$DIR\""
   status=$?
   [[ -n $SSH_TTY ]] && stty opost
   exit $status

@@ -24,9 +24,7 @@ teardown() {
   run dokku "$PLUGIN_COMMAND_PREFIX:export" l
   echo "output: $output"
   echo "status: $status"
-  password="$(sudo cat "$PLUGIN_DATA_ROOT/l/PASSWORD")"
   assert_exit_status 0
-  assert_contains "${lines[-1]}" "docker exec dokku.couchdb.l bash -c DIR=\$(mktemp -d) && couchdb-backup -b -H localhost -d \"l\" -f \"\$DIR/l.json\" -u \"l\" -p \"$password\" > /dev/null && cat \"\$DIR/l.json\" && rm -rf \"\$DIR\""
 }
 
 @test "($PLUGIN_COMMAND_PREFIX:export) success without SSH_TTY" {
@@ -34,7 +32,5 @@ teardown() {
   run dokku "$PLUGIN_COMMAND_PREFIX:export" l
   echo "output: $output"
   echo "status: $status"
-  password="$(sudo cat "$PLUGIN_DATA_ROOT/l/PASSWORD")"
   assert_exit_status 0
-  assert_contains "${lines[-1]}" "docker exec dokku.couchdb.l bash -c DIR=\$(mktemp -d) && couchdb-backup -b -H localhost -d \"l\" -f \"\$DIR/l.json\" -u \"l\" -p \"$password\" > /dev/null && cat \"\$DIR/l.json\" && rm -rf \"\$DIR\""
 }
