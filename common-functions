@@ -727,7 +727,7 @@ update_plugin_scheme_for_app() {
 verify_service_name() {
   declare desc="Verifies that a service exists"
   declare SERVICE="$1"
-  [[ ! -n "$SERVICE" ]] && dokku_log_fail "(verify_service_name) SERVICE must not be null"
+  [[ -z "$SERVICE" ]] && dokku_log_fail "(verify_service_name) SERVICE must not be null"
   [[ ! -d "$PLUGIN_DATA_ROOT/$SERVICE" ]] && dokku_log_fail "$PLUGIN_SERVICE service $SERVICE does not exist"
   return 0
 }

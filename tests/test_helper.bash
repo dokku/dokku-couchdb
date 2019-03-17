@@ -18,10 +18,15 @@ assert_equal() {
   fi
 }
 
+# ShellCheck doesn't know about $status from Bats
+# shellcheck disable=SC2154
 assert_exit_status() {
   assert_equal "$1" "$status"
 }
 
+# ShellCheck doesn't know about $status from Bats
+# shellcheck disable=SC2154
+# shellcheck disable=SC2120
 assert_success() {
   if [ "$status" -ne 0 ]; then
     flunk "command failed with exit status $status"
@@ -50,6 +55,8 @@ assert_contains() {
   fi
 }
 
+# ShellCheck doesn't know about $output from Bats
+# shellcheck disable=SC2154
 assert_output() {
   local expected
   if [ $# -eq 0 ]; then expected="$(cat -)"
