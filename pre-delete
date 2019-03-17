@@ -10,7 +10,9 @@ source "$PLUGIN_BASE_PATH/common/functions"
 source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/functions"
 
 APP="$1"
-for SERVICE in "$PLUGIN_DATA_ROOT"/*; do
+pushd "$PLUGIN_DATA_ROOT" > /dev/null
+for SERVICE in *; do
   remove_from_links_file "$(basename "$SERVICE")" "$APP"
 done
+popd > /dev/null
 exit 0
