@@ -26,6 +26,8 @@ if [[ -n $DOKKU_API_VERSION ]]; then
 fi
 
 if [[ -d "$PLUGIN_DATA_ROOT/*" ]]; then
+  set -x
+  ls -lah "$PLUGIN_DATA_ROOT"
   rm -rf "${PLUGIN_DATA_ROOT:?}/*"
 fi
 
