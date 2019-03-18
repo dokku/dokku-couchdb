@@ -2,13 +2,11 @@
 load test_helper
 
 setup() {
-  export ECHO_DOCKER_COMMAND="false"
-  dokku "$PLUGIN_COMMAND_PREFIX:create" l >&2
+  dokku "$PLUGIN_COMMAND_PREFIX:create" l
 }
 
 teardown() {
-  export ECHO_DOCKER_COMMAND="false"
-  dokku --force "$PLUGIN_COMMAND_PREFIX:destroy" l >&2
+  dokku --force "$PLUGIN_COMMAND_PREFIX:destroy" l
 }
 
 @test "($PLUGIN_COMMAND_PREFIX:export) error when there are no arguments" {
@@ -22,19 +20,17 @@ teardown() {
 }
 
 @test "($PLUGIN_COMMAND_PREFIX:export) success with SSH_TTY" {
-  export ECHO_DOCKER_COMMAND="true"
   export SSH_TTY=`tty`
   run dokku "$PLUGIN_COMMAND_PREFIX:export" l
-  password="$(cat "$PLUGIN_DATA_ROOT/l/PASSWORD")"
+  echo "output: $output"
+  echo "status: $status"
   assert_exit_status 0
-  assert_contains "${lines[-1]}" "docker exec dokku.couchdb.l bash -c DIR=\$(mktemp -d) && couchdb-backup -b -H localhost -d \"l\" -f \"\$DIR/l.json\" -u \"l\" -p \"$password\" > /dev/null && cat \"\$DIR/l.json\" && rm -rf \"\$DIR\""
 }
 
 @test "($PLUGIN_COMMAND_PREFIX:export) success without SSH_TTY" {
-  export ECHO_DOCKER_COMMAND="true"
   unset SSH_TTY
   run dokku "$PLUGIN_COMMAND_PREFIX:export" l
-  password="$(cat "$PLUGIN_DATA_ROOT/l/PASSWORD")"
+  echo "output: $output"
+  echo "status: $status"
   assert_exit_status 0
-  assert_contains "${lines[-1]}" "docker exec dokku.couchdb.l bash -c DIR=\$(mktemp -d) && couchdb-backup -b -H localhost -d \"l\" -f \"\$DIR/l.json\" -u \"l\" -p \"$password\" > /dev/null && cat \"\$DIR/l.json\" && rm -rf \"\$DIR\""
 }
