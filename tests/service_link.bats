@@ -20,7 +20,7 @@ teardown() {
 }
 
 @test "($PLUGIN_COMMAND_PREFIX:link) error when the app argument is missing" {
-  run dokku --trace "$PLUGIN_COMMAND_PREFIX:link" l
+  run dokku "$PLUGIN_COMMAND_PREFIX:link" l
   echo "output: $output"
   echo "status: $status"
   assert_contains "${lines[*]}" "Please specify an app to run the command on"
@@ -70,6 +70,7 @@ teardown() {
   dokku "$PLUGIN_COMMAND_PREFIX:link" l my_app
   run dokku config my_app
   assert_contains "${lines[*]}" "DOKKU_COUCHDB_"
+  assert_success
   dokku "$PLUGIN_COMMAND_PREFIX:unlink" l my_app
 }
 
@@ -77,6 +78,7 @@ teardown() {
   dokku "$PLUGIN_COMMAND_PREFIX:link" l my_app
   run dokku docker-options my_app
   assert_contains "${lines[*]}" "--link dokku.couchdb.l:dokku-couchdb-l"
+  assert_success
   dokku "$PLUGIN_COMMAND_PREFIX:unlink" l my_app
 }
 
@@ -86,6 +88,7 @@ teardown() {
   url=$(dokku config:get my_app COUCHDB_URL)
   password="$(sudo cat "$PLUGIN_DATA_ROOT/l/PASSWORD")"
   assert_contains "$url" "couchdb2://l:$password@dokku-couchdb-l:5984/l"
+  assert_success
   dokku "$PLUGIN_COMMAND_PREFIX:unlink" l my_app
 }
 
@@ -93,6 +96,7 @@ teardown() {
   dokku "$PLUGIN_COMMAND_PREFIX:link" l my_app --querystring "pool=5"
   url=$(dokku config:get my_app COUCHDB_URL)
   assert_contains "$url" "?pool=5"
+  assert_success
   dokku "$PLUGIN_COMMAND_PREFIX:unlink" l my_app
 }
 
@@ -101,5 +105,6 @@ teardown() {
   url=$(dokku config:get my_app ALIAS_URL)
   password="$(sudo cat "$PLUGIN_DATA_ROOT/l/PASSWORD")"
   assert_contains "$url" "http://l:$password@dokku-couchdb-l:5984/l"
+  assert_success
   dokku "$PLUGIN_COMMAND_PREFIX:unlink" l my_app
 }

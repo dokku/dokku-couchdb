@@ -8,8 +8,8 @@ else
 fi
 echo "Dokku version $DOKKU_VERSION"
 
-export DOKKU_PLUGINS_ROOT="/var/lib/dokku/plugins/available"
 export DOKKU_LIB_ROOT="/var/lib/dokku"
+export DOKKU_PLUGINS_ROOT="$DOKKU_LIB_ROOT/plugins/available"
 source "$(dirname "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)")/config"
 sudo rm -rf "$DOKKU_PLUGINS_ROOT/$PLUGIN_COMMAND_PREFIX"
 sudo mkdir -p "$DOKKU_PLUGINS_ROOT/$PLUGIN_COMMAND_PREFIX" "$DOKKU_PLUGINS_ROOT/$PLUGIN_COMMAND_PREFIX/subcommands"

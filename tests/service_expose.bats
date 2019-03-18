@@ -19,12 +19,12 @@ teardown() {
   assert_contains "${lines[*]}" "service not_existing_service does not exist"
 }
 
-@test "($PLUGIN_COMMAND_PREFIX:expose) success when not providing a custom port" {
+@test "($PLUGIN_COMMAND_PREFIX:expose) success when not providing custom ports" {
   run dokku "$PLUGIN_COMMAND_PREFIX:expose" l
   [[ "${lines[*]}" =~ exposed\ on\ port\(s\)\ \[container\-\>host\]\:\ [[:digit:]]+ ]]
 }
 
-@test "($PLUGIN_COMMAND_PREFIX:expose) success when providing a custom port" {
+@test "($PLUGIN_COMMAND_PREFIX:expose) success when providing custom ports" {
   run dokku "$PLUGIN_COMMAND_PREFIX:expose" l 4242
   assert_contains "${lines[*]}" "exposed on port(s) [container->host]: 5984->4242"
 }
