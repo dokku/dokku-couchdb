@@ -10,7 +10,7 @@ Official CouchDB plugin for dokku. Currently defaults to installing [CouchDB 1.7
 ## installation
 
 ```shell
-# on 0.4.x+
+# on 0.12.x+
 sudo dokku plugin:install https://github.com/dokku/dokku-couchdb.git couchdb
 ```
 
