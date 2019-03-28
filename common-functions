@@ -113,7 +113,7 @@ service_alternative_alias() {
   for COLOR in "${COLORS[@]}"; do
     ALIAS="${PLUGIN_ALT_ALIAS}_${COLOR}"
     local IN_USE=$(echo "$EXISTING_CONFIG" | grep "${ALIAS}_URL")
-    if [[ -z $IN_USE ]]; then
+    if [[ -z "$IN_USE" ]]; then
       break
     fi
     unset ALIAS
@@ -186,7 +186,7 @@ service_backup() {
   fi
 
   # shellcheck disable=SC2086
-  docker run --rm $BACKUP_PARAMETERS dokku/s3backup:0.9.1
+  docker run --rm $BACKUP_PARAMETERS dokku/s3backup:0.9.4
 }
 
 service_backup_auth() {
