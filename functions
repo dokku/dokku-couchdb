@@ -13,6 +13,7 @@ service_connect() {
   local SERVICE="$1"
   local SERVICE_ROOT="$PLUGIN_DATA_ROOT/$SERVICE"
   local SERVICE_NAME="$(get_service_name "$SERVICE")"
+  local DATABASE_NAME="$(get_database_name "$SERVICE")"
 
   dokku_log_fail "Not yet implemented"
 }
@@ -56,6 +57,8 @@ service_create() {
   else
     echo "" >"$SERVICE_ROOT/ENV"
   fi
+
+  write_database_name "$SERVICE"
   service_create_container "$SERVICE"
 }
 
@@ -64,15 +67,16 @@ service_create_container() {
   local SERVICE_ROOT="$PLUGIN_DATA_ROOT/$SERVICE"
   local SERVICE_HOST_ROOT="$PLUGIN_DATA_HOST_ROOT/$SERVICE"
   local SERVICE_NAME="$(get_service_name "$SERVICE")"
+  local DATABASE_NAME="$(get_database_name "$SERVICE")"
 
-  ID=$(docker run --name "$SERVICE_NAME" -v "$SERVICE_HOST_ROOT/data:/data" -e "COUCHDB_USER=$SERVICE" -e "COUCHDB_PASSWORD=$PASSWORD" -e "COUCHDB_DBNAME=$SERVICE" --env-file="$SERVICE_ROOT/ENV" -d --restart always --label dokku=service --label "dokku.service=$PLUGIN_COMMAND_PREFIX" "$PLUGIN_IMAGE:$PLUGIN_IMAGE_VERSION")
+  ID=$(docker run --name "$SERVICE_NAME" -v "$SERVICE_HOST_ROOT/data:/data" -e "COUCHDB_USER=$SERVICE" -e "COUCHDB_PASSWORD=$PASSWORD" -e "COUCHDB_DBNAME=$DATABASE_NAME" --env-file="$SERVICE_ROOT/ENV" -d --restart always --label dokku=service --label "dokku.service=$PLUGIN_COMMAND_PREFIX" "$PLUGIN_IMAGE:$PLUGIN_IMAGE_VERSION")
   echo "$ID" >"$SERVICE_ROOT/ID"
 
   dokku_log_verbose_quiet "Waiting for container to be ready"
   docker run --rm --link "$SERVICE_NAME:$PLUGIN_COMMAND_PREFIX" dokku/wait:0.3.0 -p "$PLUGIN_DATASTORE_WAIT_PORT" >/dev/null
 
   local CONTAINER_IP="$(get_container_ip "${ID}")"
-  local STATUS_CODE="$(curl -X PUT -u "${SERVICE}:${PASSWORD}" -s -o /dev/null -w "%{http_code}" "http://$CONTAINER_IP:5984/$SERVICE")"
+  local STATUS_CODE="$(curl -X PUT -u "${SERVICE}:${PASSWORD}" -s -o /dev/null -w "%{http_code}" "http://$CONTAINER_IP:5984/$DATABASE_NAME")"
   if [[ "$STATUS_CODE" == "201" ]] || [[ "$STATUS_CODE" == "412" ]]; then
     dokku_log_info2 "$PLUGIN_SERVICE container created: $SERVICE"
   else
@@ -85,11 +89,12 @@ service_export() {
   local SERVICE="$1"
   local SERVICE_ROOT="$PLUGIN_DATA_ROOT/$SERVICE"
   local SERVICE_NAME="$(get_service_name "$SERVICE")"
+  local DATABASE_NAME="$(get_database_name "$SERVICE")"
   local PASSWORD="$(cat "$SERVICE_ROOT/PASSWORD")"
 
   [[ -n $SSH_TTY ]] && stty -opost
   docker exec "$SERVICE_NAME" bash -c "[[ ! -f /usr/local/bin/couchdb-backup ]] && curl $COUCHDB_BACKUP -s -o /usr/local/bin/couchdb-backup && chmod +x /usr/local/bin/couchdb-backup" || true
-  docker exec "$SERVICE_NAME" bash -c "DIR=\$(mktemp -d) && couchdb-backup -b -H localhost -d \"$SERVICE\" -f \"\$DIR/$SERVICE.json\" -u \"$SERVICE\" -p \"$PASSWORD\" > /dev/null 2>&1 && cat \"\$DIR/$SERVICE.json\" && rm -rf \"\$DIR\""
+  docker exec "$SERVICE_NAME" bash -c "DIR=\$(mktemp -d) && couchdb-backup -b -H localhost -d \"$DATABASE_NAME\" -f \"\$DIR/$SERVICE.json\" -u \"$SERVICE\" -p \"$PASSWORD\" > /dev/null 2>&1 && cat \"\$DIR/$SERVICE.json\" && rm -rf \"\$DIR\""
   status=$?
   [[ -n $SSH_TTY ]] && stty opost
   exit $status
@@ -100,13 +105,14 @@ service_import() {
   local SERVICE_ROOT="$PLUGIN_DATA_ROOT/$SERVICE"
   local SERVICE_HOST_ROOT="$PLUGIN_DATA_HOST_ROOT/$SERVICE"
   local SERVICE_NAME="$(get_service_name "$SERVICE")"
+  local DATABASE_NAME="$(get_database_name "$SERVICE")"
   local PASSWORD="$(cat "$SERVICE_ROOT/PASSWORD")"
 
   if [[ -t 0 ]]; then
     dokku_log_fail "No data provided on stdin."
   fi
   docker exec "$SERVICE_NAME" bash -c "[[ ! -f /usr/local/bin/couchdb-backup ]] && curl $COUCHDB_BACKUP -s -o /usr/local/bin/couchdb-backup && chmod +x /usr/local/bin/couchdb-backup" || true
-  docker exec -i "$SERVICE_NAME" bash -c "DIR=\$(mktemp -d) && cat > \"\$DIR/$SERVICE.json\" && couchdb-backup -r -H localhost -d \"$SERVICE\" -f \"\$DIR/$SERVICE.json\" -u \"$SERVICE\" -p \"$PASSWORD\" && rm -rf \"\$DIR\""
+  docker exec -i "$SERVICE_NAME" bash -c "DIR=\$(mktemp -d) && cat > \"\$DIR/$SERVICE.json\" && couchdb-backup -r -H localhost -d \"$DATABASE_NAME\" -f \"\$DIR/$SERVICE.json\" -u \"$SERVICE\" -p \"$PASSWORD\" && rm -rf \"\$DIR\""
 }
 
 # required by common-functions
@@ -136,11 +142,11 @@ service_start() {
   fi
 }
 
-# required by common-functions
 service_url() {
   local SERVICE="$1"
   local SERVICE_ROOT="$PLUGIN_DATA_ROOT/$SERVICE"
-  local PASSWORD="$(cat "$SERVICE_ROOT/PASSWORD")"
   local SERVICE_DNS_HOSTNAME="$(service_dns_hostname "$SERVICE")"
-  echo "$PLUGIN_SCHEME://$SERVICE:$PASSWORD@$SERVICE_DNS_HOSTNAME:${PLUGIN_DATASTORE_PORTS[0]}/$SERVICE"
+  local DATABASE_NAME="$(get_database_name "$SERVICE")"
+  local PASSWORD="$(cat "$SERVICE_ROOT/PASSWORD")"
+  echo "$PLUGIN_SCHEME://$SERVICE:$PASSWORD@$SERVICE_DNS_HOSTNAME:${PLUGIN_DATASTORE_PORTS[0]}/$DATABASE_NAME"
 }
