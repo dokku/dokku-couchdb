@@ -69,7 +69,7 @@ service_create_container() {
   local SERVICE_NAME="$(get_service_name "$SERVICE")"
   local DATABASE_NAME="$(get_database_name "$SERVICE")"
 
-  ID=$(docker run --name "$SERVICE_NAME" -v "$SERVICE_HOST_ROOT/data:/data" -e "COUCHDB_USER=$SERVICE" -e "COUCHDB_PASSWORD=$PASSWORD" -e "COUCHDB_DBNAME=$DATABASE_NAME" --env-file="$SERVICE_ROOT/ENV" -d --restart always --label dokku=service --label "dokku.service=$PLUGIN_COMMAND_PREFIX" "$PLUGIN_IMAGE:$PLUGIN_IMAGE_VERSION")
+  ID=$(docker run --name "$SERVICE_NAME" -v "$SERVICE_HOST_ROOT/data:/opt/couchdb/data" -e "COUCHDB_USER=$SERVICE" -e "COUCHDB_PASSWORD=$PASSWORD" -e "COUCHDB_DBNAME=$DATABASE_NAME" --env-file="$SERVICE_ROOT/ENV" -d --restart always --label dokku=service --label "dokku.service=$PLUGIN_COMMAND_PREFIX" "$PLUGIN_IMAGE:$PLUGIN_IMAGE_VERSION")
   echo "$ID" >"$SERVICE_ROOT/ID"
 
   dokku_log_verbose_quiet "Waiting for container to be ready"
