@@ -25,4 +25,4 @@ if [[ -n $DOKKU_API_VERSION ]]; then
   export PLUGIN_BASE_PATH="$PLUGIN_ENABLED_PATH"
 fi
 
-export COUCHDB_BACKUP=${COUCHDB_DUMP:="https://raw.githubusercontent.com/danielebailo/couchdb-dump/master/couchdb-backup.sh"}
+export COUCHDB_BACKUP=${COUCHDB_DUMP:="https://raw.githubusercontent.com/danielebailo/couchdb-dump/master/couchdb-dump.sh"}
