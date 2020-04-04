@@ -84,8 +84,8 @@ setup:
 test: lint unit-tests
 
 report: tmp/xunit-to-github tmp/xunit-reader
-	tmp/xunit-reader 'tmp/test-results/bats/*.xml'
-	tmp/xunit-reader 'tmp/test-results/shellcheck/*.xml'
+	tmp/xunit-reader -p 'tmp/test-results/bats/*.xml'
+	tmp/xunit-reader -p 'tmp/test-results/shellcheck/*.xml'
 ifdef TRAVIS_REPO_SLUG
 ifdef GITHUB_ACCESS_TOKEN
 ifneq ($(TRAVIS_PULL_REQUEST),false)
