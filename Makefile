@@ -3,6 +3,8 @@ SYSTEM_NAME  = $(shell uname -s | tr '[:upper:]' '[:lower:]')
 
 SHFMT_VERSION = 3.0.2
 XUNIT_TO_GITHUB_VERSION = 0.3.0
+XUNIT_READER_VERSION = 0.1.0
+
 bats:
 ifeq ($(SYSTEM_NAME),darwin)
 ifneq ($(shell bats --version >/dev/null 2>&1 ; echo $$?),0)
@@ -69,13 +71,21 @@ tmp/xunit-to-github:
 	tar xf tmp/xunit-to-github.tgz -C tmp
 	chmod +x tmp/xunit-to-github
 
+tmp/xunit-reader:
+	mkdir -p tmp
+	curl -o tmp/xunit-reader.tgz -sL https://github.com/josegonzalez/go-xunit-reader/releases/download/v$(XUNIT_READER_VERSION)/xunit-reader_$(XUNIT_READER_VERSION)_$(SYSTEM_NAME)_$(HARDWARE).tgz
+	tar xf tmp/xunit-reader.tgz -C tmp
+	chmod +x tmp/xunit-reader
+
 setup:
 	bash tests/setup.sh
 	$(MAKE) ci-dependencies
 
 test: lint unit-tests
 
-report: tmp/xunit-to-github
+report: tmp/xunit-to-github tmp/xunit-reader
+	tmp/xunit-reader 'tmp/test-results/bats/*.xml'
+	tmp/xunit-reader 'tmp/test-results/shellcheck/*.xml'
 ifdef TRAVIS_REPO_SLUG
 ifdef GITHUB_ACCESS_TOKEN
 ifneq ($(TRAVIS_PULL_REQUEST),false)
