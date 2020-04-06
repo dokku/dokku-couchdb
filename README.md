@@ -1,4 +1,4 @@
-# dokku couchdb [![Build Status](https://img.shields.io/travis/dokku/dokku-couchdb.svg?branch=master "Build Status")](https://travis-ci.org/dokku/dokku-couchdb) [![IRC Network](https://img.shields.io/badge/irc-freenode-blue.svg "IRC Freenode")](https://webchat.freenode.net/?channels=dokku)
+# dokku couchdb [![Build Status](https://img.shields.io/circleci/project/github/dokku/dokku-couchdb.svg?branch=master&style=flat-square "Build Status")](https://circleci.com/gh/dokku/dokku-couchdb/tree/master) [![IRC Network](https://img.shields.io/badge/irc-freenode-blue.svg?style=flat-square "IRC Freenode")](https://webchat.freenode.net/?channels=dokku)
 
 Official couchdb plugin for dokku. Currently defaults to installing [couchdb 2.3.1](https://hub.docker.com/_/couchdb/).
 
