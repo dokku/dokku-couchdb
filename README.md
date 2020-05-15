@@ -77,15 +77,15 @@ Create a couchdb service named lolipop:
 dokku couchdb:create lolipop
 ```
 
-You can also specify the image and image version to use for the service. It *must* be compatible with the ${plugin_image} image.
+You can also specify the image and image version to use for the service. It *must* be compatible with the couchdb image. 
 
 ```shell
-export COUCHDB_IMAGE="${PLUGIN_IMAGE}"
+export COUCHDB_IMAGE="couchdb"
 export COUCHDB_IMAGE_VERSION="${PLUGIN_IMAGE_VERSION}"
 dokku couchdb:create lolipop
 ```
 
-You can also specify custom environment variables to start the couchdb service in semi-colon separated form.
+You can also specify custom environment variables to start the couchdb service in semi-colon separated form. 
 
 ```shell
 export COUCHDB_CUSTOM_ENV="USER=alpha;HOST=beta"
@@ -181,7 +181,7 @@ flags:
 - `-a|--alias "BLUE_DATABASE"`: an alternative alias to use for linking to an app via environment variable
 - `-q|--querystring "pool=5"`: ampersand delimited querystring arguments to append to the service link
 
-A couchdb service can be linked to a container. This will use native docker links via the docker-options plugin. Here we link it to our 'playground' app.
+A couchdb service can be linked to a container. This will use native docker links via the docker-options plugin. Here we link it to our 'playground' app. 
 
 > NOTE: this will restart your app
 
@@ -212,14 +212,14 @@ The host exposed here only works internally in docker containers. If you want yo
 dokku couchdb:link other_service playground
 ```
 
-It is possible to change the protocol for couchdb_url by setting the environment variable couchdb_database_scheme on the app. Doing so will after linking will cause the plugin to think the service is not linked, and we advise you to unlink before proceeding.
+It is possible to change the protocol for `COUCHDB_URL` by setting the environment variable `COUCHDB_DATABASE_SCHEME` on the app. Doing so will after linking will cause the plugin to think the service is not linked, and we advise you to unlink before proceeding. 
 
 ```shell
 dokku config:set playground COUCHDB_DATABASE_SCHEME=http2
 dokku couchdb:link lolipop playground
 ```
 
-This will cause couchdb_url to be set as:
+This will cause `COUCHDB_URL` to be set as:
 
 ```
 http2://lolipop:SOME_PASSWORD@dokku-couchdb-lolipop:5984/lolipop
@@ -264,13 +264,13 @@ dokku couchdb:connect lolipop
 dokku couchdb:enter <service>
 ```
 
-A bash prompt can be opened against a running service. Filesystem changes will not be saved to disk.
+A bash prompt can be opened against a running service. Filesystem changes will not be saved to disk. 
 
 ```shell
 dokku couchdb:enter lolipop
 ```
 
-You may also run a command directly against the service. Filesystem changes will not be saved to disk.
+You may also run a command directly against the service. Filesystem changes will not be saved to disk. 
 
 ```shell
 dokku couchdb:enter lolipop touch /tmp/test
@@ -283,10 +283,10 @@ dokku couchdb:enter lolipop touch /tmp/test
 dokku couchdb:expose <service> <ports...>
 ```
 
-Expose the service on the service's normal ports, allowing access to it from the public interface (0. 0. 0. 0):
+Expose the service on the service's normal ports, allowing access to it from the public interface (`0.0.0.0`):
 
 ```shell
-dokku couchdb:expose lolipop ${PLUGIN_DATASTORE_PORTS[@]}
+dokku couchdb:expose lolipop 5984
 ```
 
 ### unexpose a previously exposed couchdb service
@@ -296,7 +296,7 @@ dokku couchdb:expose lolipop ${PLUGIN_DATASTORE_PORTS[@]}
 dokku couchdb:unexpose <service>
 ```
 
-Unexpose the service, removing access to it from the public interface (0. 0. 0. 0):
+Unexpose the service, removing access to it from the public interface (`0.0.0.0`):
 
 ```shell
 dokku couchdb:unexpose lolipop
@@ -323,7 +323,7 @@ You can promote the new service to be the primary one:
 dokku couchdb:promote other_service playground
 ```
 
-This will replace couchdb_url with the url from other_service and generate another environment variable to hold the previous value if necessary. You could end up with the following for example:
+This will replace `COUCHDB_URL` with the url from other_service and generate another environment variable to hold the previous value if necessary. You could end up with the following for example:
 
 ```
 COUCHDB_URL=http://other_service:ANOTHER_PASSWORD@dokku-couchdb-other-service:5984/other_service
@@ -401,7 +401,7 @@ Service scripting can be executed using the following commands:
 dokku couchdb:app-links <app>
 ```
 
-List all couchdb services that are linked to the 'playground' app.
+List all couchdb services that are linked to the 'playground' app. 
 
 ```shell
 dokku couchdb:app-links playground
@@ -435,7 +435,7 @@ dokku couchdb:clone lolipop lolipop-2
 dokku couchdb:exists <service>
 ```
 
-Here we check if the lolipop couchdb service exists.
+Here we check if the lolipop couchdb service exists. 
 
 ```shell
 dokku couchdb:exists lolipop
@@ -448,7 +448,7 @@ dokku couchdb:exists lolipop
 dokku couchdb:linked <service> <app>
 ```
 
-Here we check if the lolipop couchdb service is linked to the 'playground' app.
+Here we check if the lolipop couchdb service is linked to the 'playground' app. 
 
 ```shell
 dokku couchdb:linked lolipop playground
@@ -461,7 +461,7 @@ dokku couchdb:linked lolipop playground
 dokku couchdb:links <service>
 ```
 
-List all apps linked to the 'lolipop' couchdb service.
+List all apps linked to the 'lolipop' couchdb service. 
 
 ```shell
 dokku couchdb:links lolipop
@@ -566,7 +566,7 @@ flags:
 
 - `-u|--use-iam`: use the IAM profile associated with the current server
 
-Backup the 'lolipop' service to the 'my-s3-bucket' bucket on aws:
+Backup the 'lolipop' service to the 'my-s3-bucket' bucket on ``AWS`:`
 
 ```shell
 dokku couchdb:backup lolipop my-s3-bucket --use-iam
@@ -579,7 +579,7 @@ dokku couchdb:backup lolipop my-s3-bucket --use-iam
 dokku couchdb:backup-set-encryption <service> <passphrase>
 ```
 
-Set the gpg-compatible passphrase for encrypting backups for backups:
+Set the GPG-compatible passphrase for encrypting backups for backups:
 
 ```shell
 dokku couchdb:backup-set-encryption lolipop
@@ -592,7 +592,7 @@ dokku couchdb:backup-set-encryption lolipop
 dokku couchdb:backup-unset-encryption <service>
 ```
 
-Unset the gpg encryption passphrase for backups:
+Unset the `GPG` encryption passphrase for backups:
 
 ```shell
 dokku couchdb:backup-unset-encryption lolipop
