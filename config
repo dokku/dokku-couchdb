@@ -21,13 +21,14 @@ export PLUGIN_SCHEME="http"
 export PLUGIN_SERVICE="CouchDB"
 export PLUGIN_VARIABLE="COUCHDB"
 export PLUGIN_BASE_PATH="$PLUGIN_PATH"
+export PLUGIN_CONFIG_SUFFIX="config"
 if [[ -n $DOKKU_API_VERSION ]]; then
   export PLUGIN_BASE_PATH="$PLUGIN_ENABLED_PATH"
 fi
-
-export COUCHDB_BACKUP=${COUCHDB_DUMP:="https://raw.githubusercontent.com/danielebailo/couchdb-dump/master/couchdb-dump.sh"}
 
 export PLUGIN_BUSYBOX_IMAGE="busybox:1.31.1-uclibc"
 export PLUGIN_AMBASSADOR_IMAGE="dokku/ambassador:0.3.3"
 export PLUGIN_S3BACKUP_IMAGE="dokku/s3backup:0.10.3"
 export PLUGIN_WAIT_IMAGE="dokku/wait:0.4.3"
+
+export COUCHDB_BACKUP=${COUCHDB_DUMP:="https://raw.githubusercontent.com/danielebailo/couchdb-dump/master/couchdb-dump.sh"}
