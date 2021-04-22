@@ -8,27 +8,30 @@ on:
       - '*'
   push:
     branches:
-      - 'master'
+      - '*'
 
 jobs:
   unit-tests:
     name: unit-tests
-    runs-on: ubuntu-16.04
+    runs-on: ubuntu-18.04
     strategy:
       fail-fast: true
-    matrix:
-      dokku-version: [v0.19.0, master]
+      matrix:
+        dokku-version:
+          - master
+    env:
+      DOKKU_VERSION: ${{ matrix.dokku-version }}
 
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
         with:
-          python-version: '3.7.0'
+          python-version: '3.7.x'
 
       - run: make setup
-        env:
-          DOKKU_VERSION: ${{ matrix.dokku-version }}
+
       - run: sudo sysctl -w vm.max_map_count=262144
+
       - run: |
           make generate
           if ! git diff --quiet README.md; then
@@ -46,6 +49,7 @@ jobs:
           path: build
 
       - uses: actions/upload-artifact@v2
+        if: failure()
         with:
           name: tmp/test-results
           path: test-results
@@ -69,13 +73,3 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           files: test-results/**/*.xml
           comment_on_pr: false
-
-
-      - store_artifacts:
-          path: build
-          destination: build
-      - store_artifacts:
-          path: tmp/test-results
-          destination: test-results
-      - store_test_results:
-          path: tmp/test-results
