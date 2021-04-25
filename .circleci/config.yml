@@ -29,4 +29,3 @@ workflows:
   build:
     jobs:
       - "build-master"
-      - "build-version"
