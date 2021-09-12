@@ -33,7 +33,7 @@ couchdb:destroy <service> [-f|--force]             # delete the couchdb service/
 couchdb:enter <service>                            # enter or run a command in a running couchdb service container
 couchdb:exists <service>                           # check if the couchdb service exists
 couchdb:export <service>                           # export a dump of the couchdb service database
-couchdb:expose <service> <ports...>                # expose a couchdb service on custom port if provided (random port otherwise)
+couchdb:expose <service> <ports...>                # expose a couchdb service on custom host:port if provided (random port on the 0.0.0.0 interface if otherwise unspecified)
 couchdb:import <service>                           # import a dump into the couchdb service database
 couchdb:info <service> [--single-info-flag]        # print the service information
 couchdb:link <service> <app> [--link-flags...]     # link the couchdb service to the app
@@ -276,7 +276,7 @@ You may also run a command directly against the service. Filesystem changes will
 dokku couchdb:enter lolipop touch /tmp/test
 ```
 
-### expose a couchdb service on custom port if provided (random port otherwise)
+### expose a couchdb service on custom host:port if provided (random port on the 0.0.0.0 interface if otherwise unspecified)
 
 ```shell
 # usage
@@ -287,6 +287,12 @@ Expose the service on the service's normal ports, allowing access to it from the
 
 ```shell
 dokku couchdb:expose lolipop 5984
+```
+
+Expose the service on the service's normal ports, with the first on a specified ip adddress (127.0.0.1):
+
+```shell
+dokku couchdb:expose lolipop 127.0.0.1:5984
 ```
 
 ### unexpose a previously exposed couchdb service
