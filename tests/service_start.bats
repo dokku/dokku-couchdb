@@ -2,11 +2,11 @@
 load test_helper
 
 setup() {
-  dokku "$PLUGIN_COMMAND_PREFIX:create" l
+  dokku "$PLUGIN_COMMAND_PREFIX:create" ls
 }
 
 teardown() {
-  dokku --force "$PLUGIN_COMMAND_PREFIX:destroy" l
+  dokku --force "$PLUGIN_COMMAND_PREFIX:destroy" ls
 }
 
 @test "($PLUGIN_COMMAND_PREFIX:start) error when there are no arguments" {
@@ -20,7 +20,7 @@ teardown() {
 }
 
 @test "($PLUGIN_COMMAND_PREFIX:start) success" {
-  run dokku "$PLUGIN_COMMAND_PREFIX:start" l
+  run dokku "$PLUGIN_COMMAND_PREFIX:start" ls
   assert_success
 }
 

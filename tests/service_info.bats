@@ -2,11 +2,11 @@
 load test_helper
 
 setup() {
-  dokku "$PLUGIN_COMMAND_PREFIX:create" l
+  dokku "$PLUGIN_COMMAND_PREFIX:create" ls
 }
 
 teardown() {
-  dokku --force "$PLUGIN_COMMAND_PREFIX:destroy" l
+  dokku --force "$PLUGIN_COMMAND_PREFIX:destroy" ls
 }
 
 @test "($PLUGIN_COMMAND_PREFIX:info) error when there are no arguments" {
@@ -20,9 +20,9 @@ teardown() {
 }
 
 @test "($PLUGIN_COMMAND_PREFIX:info) success" {
-  run dokku "$PLUGIN_COMMAND_PREFIX:info" l
-  local password="$(sudo cat "$PLUGIN_DATA_ROOT/l/PASSWORD")"
-  assert_contains "${lines[*]}" "http://l:$password@dokku-couchdb-l:5984/l"
+  run dokku "$PLUGIN_COMMAND_PREFIX:info" ls
+  local password="$(sudo cat "$PLUGIN_DATA_ROOT/ls/PASSWORD")"
+  assert_contains "${lines[*]}" "http://ls:$password@dokku-couchdb-ls:5984/ls"
 }
 
 @test "($PLUGIN_COMMAND_PREFIX:info) replaces underscores by dash in hostname" {
@@ -34,45 +34,45 @@ teardown() {
 }
 
 @test "($PLUGIN_COMMAND_PREFIX:info) success with flag" {
-  run dokku "$PLUGIN_COMMAND_PREFIX:info" l --dsn
-  local password="$(sudo cat "$PLUGIN_DATA_ROOT/l/PASSWORD")"
-  assert_output "http://l:$password@dokku-couchdb-l:5984/l"
+  run dokku "$PLUGIN_COMMAND_PREFIX:info" ls --dsn
+  local password="$(sudo cat "$PLUGIN_DATA_ROOT/ls/PASSWORD")"
+  assert_output "http://ls:$password@dokku-couchdb-ls:5984/ls"
 
-  run dokku "$PLUGIN_COMMAND_PREFIX:info" l --config-dir
+  run dokku "$PLUGIN_COMMAND_PREFIX:info" ls --config-dir
   assert_success
 
-  run dokku "$PLUGIN_COMMAND_PREFIX:info" l --data-dir
+  run dokku "$PLUGIN_COMMAND_PREFIX:info" ls --data-dir
   assert_success
 
-  run dokku "$PLUGIN_COMMAND_PREFIX:info" l --dsn
+  run dokku "$PLUGIN_COMMAND_PREFIX:info" ls --dsn
   assert_success
 
-  run dokku "$PLUGIN_COMMAND_PREFIX:info" l --exposed-ports
+  run dokku "$PLUGIN_COMMAND_PREFIX:info" ls --exposed-ports
   assert_success
 
-  run dokku "$PLUGIN_COMMAND_PREFIX:info" l --id
+  run dokku "$PLUGIN_COMMAND_PREFIX:info" ls --id
   assert_success
 
-  run dokku "$PLUGIN_COMMAND_PREFIX:info" l --internal-ip
+  run dokku "$PLUGIN_COMMAND_PREFIX:info" ls --internal-ip
   assert_success
 
-  run dokku "$PLUGIN_COMMAND_PREFIX:info" l --links
+  run dokku "$PLUGIN_COMMAND_PREFIX:info" ls --links
   assert_success
 
-  run dokku "$PLUGIN_COMMAND_PREFIX:info" l --service-root
+  run dokku "$PLUGIN_COMMAND_PREFIX:info" ls --service-root
   assert_success
 
-  run dokku "$PLUGIN_COMMAND_PREFIX:info" l --service-root
+  run dokku "$PLUGIN_COMMAND_PREFIX:info" ls --service-root
   assert_success
 
-  run dokku "$PLUGIN_COMMAND_PREFIX:info" l --status
+  run dokku "$PLUGIN_COMMAND_PREFIX:info" ls --status
   assert_success
 
-  run dokku "$PLUGIN_COMMAND_PREFIX:info" l --version
+  run dokku "$PLUGIN_COMMAND_PREFIX:info" ls --version
   assert_success
 }
 
 @test "($PLUGIN_COMMAND_PREFIX:info) error when invalid flag" {
-  run dokku "$PLUGIN_COMMAND_PREFIX:info" l --invalid-flag
+  run dokku "$PLUGIN_COMMAND_PREFIX:info" ls --invalid-flag
   assert_failure
 }

@@ -2,9 +2,9 @@
 load test_helper
 
 @test "($PLUGIN_COMMAND_PREFIX:destroy) success with --force" {
-  dokku "$PLUGIN_COMMAND_PREFIX:create" l
-  run dokku --force "$PLUGIN_COMMAND_PREFIX:destroy" l
-  assert_contains "${lines[*]}" "container deleted: l"
+  dokku "$PLUGIN_COMMAND_PREFIX:create" ls
+  run dokku --force "$PLUGIN_COMMAND_PREFIX:destroy" ls
+  assert_contains "${lines[*]}" "container deleted: ls"
 }
 
 @test "($PLUGIN_COMMAND_PREFIX:destroy) error when there are no arguments" {
@@ -18,13 +18,13 @@ load test_helper
 }
 
 @test "($PLUGIN_COMMAND_PREFIX:destroy) error when container is linked to an app" {
-  dokku "$PLUGIN_COMMAND_PREFIX:create" l
+  dokku "$PLUGIN_COMMAND_PREFIX:create" ls
   dokku apps:create app
-  dokku "$PLUGIN_COMMAND_PREFIX:link" l app
-  run dokku --force "$PLUGIN_COMMAND_PREFIX:destroy" l
+  dokku "$PLUGIN_COMMAND_PREFIX:link" ls app
+  run dokku --force "$PLUGIN_COMMAND_PREFIX:destroy" ls
   assert_contains "${lines[*]}" "Cannot delete linked service"
 
-  dokku "$PLUGIN_COMMAND_PREFIX:unlink" l app
-  run dokku --force "$PLUGIN_COMMAND_PREFIX:destroy" l
-  assert_contains "${lines[*]}" "container deleted: l"
+  dokku "$PLUGIN_COMMAND_PREFIX:unlink" ls app
+  run dokku --force "$PLUGIN_COMMAND_PREFIX:destroy" ls
+  assert_contains "${lines[*]}" "container deleted: ls"
 }

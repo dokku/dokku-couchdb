@@ -2,11 +2,11 @@
 load test_helper
 
 setup() {
-  dokku "$PLUGIN_COMMAND_PREFIX:create" l
+  dokku "$PLUGIN_COMMAND_PREFIX:create" ls
 }
 
 teardown() {
-  dokku --force "$PLUGIN_COMMAND_PREFIX:destroy" l
+  dokku --force "$PLUGIN_COMMAND_PREFIX:destroy" ls
 }
 
 @test "($PLUGIN_COMMAND_PREFIX:expose) error when there are no arguments" {
@@ -20,11 +20,11 @@ teardown() {
 }
 
 @test "($PLUGIN_COMMAND_PREFIX:expose) success when not providing custom ports" {
-  run dokku "$PLUGIN_COMMAND_PREFIX:expose" l
+  run dokku "$PLUGIN_COMMAND_PREFIX:expose" ls
   [[ "${lines[*]}" =~ exposed\ on\ port\(s\)\ \[container\-\>host\]\:\ [[:digit:]]+ ]]
 }
 
 @test "($PLUGIN_COMMAND_PREFIX:expose) success when providing custom ports" {
-  run dokku "$PLUGIN_COMMAND_PREFIX:expose" l 4242
+  run dokku "$PLUGIN_COMMAND_PREFIX:expose" ls 4242
   assert_contains "${lines[*]}" "exposed on port(s) [container->host]: 5984->4242"
 }

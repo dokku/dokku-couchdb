@@ -2,11 +2,11 @@
 load test_helper
 
 setup() {
-  dokku "$PLUGIN_COMMAND_PREFIX:create" l
+  dokku "$PLUGIN_COMMAND_PREFIX:create" ls
 }
 
 teardown() {
-  dokku --force "$PLUGIN_COMMAND_PREFIX:destroy" l
+  dokku --force "$PLUGIN_COMMAND_PREFIX:destroy" ls
 }
 
 @test "($PLUGIN_COMMAND_PREFIX:export) error when there are no arguments" {
@@ -24,7 +24,7 @@ teardown() {
     skip "No tty is available on Github Actions"
   fi
   export SSH_TTY=`tty`
-  run dokku "$PLUGIN_COMMAND_PREFIX:export" l
+  run dokku "$PLUGIN_COMMAND_PREFIX:export" ls
   echo "output: $output"
   echo "status: $status"
   assert_exit_status 0
@@ -32,7 +32,7 @@ teardown() {
 
 @test "($PLUGIN_COMMAND_PREFIX:export) success without SSH_TTY" {
   unset SSH_TTY
-  run dokku "$PLUGIN_COMMAND_PREFIX:export" l
+  run dokku "$PLUGIN_COMMAND_PREFIX:export" ls
   echo "output: $output"
   echo "status: $status"
   assert_exit_status 0

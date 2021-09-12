@@ -2,9 +2,9 @@
 load test_helper
 
 @test "($PLUGIN_COMMAND_PREFIX:create) success" {
-  run dokku "$PLUGIN_COMMAND_PREFIX:create" l
-  assert_contains "${lines[*]}" "container created: l"
-  dokku --force "$PLUGIN_COMMAND_PREFIX:destroy" l
+  run dokku "$PLUGIN_COMMAND_PREFIX:create" ls
+  assert_contains "${lines[*]}" "container created: ls"
+  dokku --force "$PLUGIN_COMMAND_PREFIX:destroy" ls
 }
 
 @test "($PLUGIN_COMMAND_PREFIX:create) service with dashes" {

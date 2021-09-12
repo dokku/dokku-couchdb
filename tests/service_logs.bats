@@ -2,11 +2,11 @@
 load test_helper
 
 setup() {
-  dokku "$PLUGIN_COMMAND_PREFIX:create" l
+  dokku "$PLUGIN_COMMAND_PREFIX:create" ls
 }
 
 teardown() {
-  dokku --force "$PLUGIN_COMMAND_PREFIX:destroy" l
+  dokku --force "$PLUGIN_COMMAND_PREFIX:destroy" ls
 }
 
 @test "($PLUGIN_COMMAND_PREFIX:logs) error when there are no arguments" {
@@ -27,7 +27,7 @@ teardown() {
 
 @test "($PLUGIN_COMMAND_PREFIX:logs) success when not tailing" {
   skip "This may fail if there is no log output"
-  run dokku "$PLUGIN_COMMAND_PREFIX:logs" l
+  run dokku "$PLUGIN_COMMAND_PREFIX:logs" ls
   echo "output: $output"
   echo "status: $status"
   assert_success
@@ -35,7 +35,7 @@ teardown() {
 
 @test "($PLUGIN_COMMAND_PREFIX:logs) success when tailing" {
   skip "This will hang as it waits for log output"
-  run dokku "$PLUGIN_COMMAND_PREFIX:logs" l -t
+  run dokku "$PLUGIN_COMMAND_PREFIX:logs" ls -t
   echo "output: $output"
   echo "status: $status"
   assert_success

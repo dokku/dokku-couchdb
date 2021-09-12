@@ -2,12 +2,12 @@
 load test_helper
 
 setup() {
-  dokku "$PLUGIN_COMMAND_PREFIX:create" l
+  dokku "$PLUGIN_COMMAND_PREFIX:create" ls
   echo '{"new_edits":false,"docs":[]}' | tee "/tmp/fake.json"
 }
 
 teardown() {
-  dokku --force "$PLUGIN_COMMAND_PREFIX:destroy" l
+  dokku --force "$PLUGIN_COMMAND_PREFIX:destroy" ls
   rm -f "/tmp/fake.json"
 }
 
@@ -27,13 +27,13 @@ teardown() {
   if [[ -n "$GITHUB_WORKFLOW" ]]; then
     skip "No tty is available on Github Actions"
   fi
-  run dokku "$PLUGIN_COMMAND_PREFIX:import" l
+  run dokku "$PLUGIN_COMMAND_PREFIX:import" ls
   assert_contains "${lines[*]}" "No data provided on stdin"
   assert_failure
 }
 
 @test "($PLUGIN_COMMAND_PREFIX:import) success" {
-  run dokku "$PLUGIN_COMMAND_PREFIX:import" l < "/tmp/fake.json"
+  run dokku "$PLUGIN_COMMAND_PREFIX:import" ls < "/tmp/fake.json"
   echo "output: $output"
   echo "status: $status"
   assert_success
