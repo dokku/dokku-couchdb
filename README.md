@@ -499,7 +499,7 @@ dokku couchdb:import <service>
 Import a datastore dump:
 
 ```shell
-dokku couchdb:import lollipop < database.dump
+dokku couchdb:import lollipop < data.dump
 ```
 
 ### export a dump of the couchdb service database
@@ -518,7 +518,7 @@ dokku couchdb:export lollipop
 You can redirect this output to a file:
 
 ```shell
-dokku couchdb:export lollipop > lollipop.dump
+dokku couchdb:export lollipop > data.dump
 ```
 
 ### Backups
