@@ -74,10 +74,10 @@ flags:
 - `-r|--root-password PASSWORD`: override the root-level service password
 - `-s|--shm-size SHM_SIZE`: override shared memory size for couchdb docker container
 
-Create a couchdb service named lolipop:
+Create a couchdb service named lollipop:
 
 ```shell
-dokku couchdb:create lolipop
+dokku couchdb:create lollipop
 ```
 
 You can also specify the image and image version to use for the service. It *must* be compatible with the couchdb image.
@@ -85,14 +85,14 @@ You can also specify the image and image version to use for the service. It *mus
 ```shell
 export COUCHDB_IMAGE="couchdb"
 export COUCHDB_IMAGE_VERSION="${PLUGIN_IMAGE_VERSION}"
-dokku couchdb:create lolipop
+dokku couchdb:create lollipop
 ```
 
 You can also specify custom environment variables to start the couchdb service in semi-colon separated form.
 
 ```shell
 export COUCHDB_CUSTOM_ENV="USER=alpha;HOST=beta"
-dokku couchdb:create lolipop
+dokku couchdb:create lollipop
 ```
 
 ### print the service information
@@ -118,22 +118,22 @@ flags:
 Get connection information as follows:
 
 ```shell
-dokku couchdb:info lolipop
+dokku couchdb:info lollipop
 ```
 
 You can also retrieve a specific piece of service info via flags:
 
 ```shell
-dokku couchdb:info lolipop --config-dir
-dokku couchdb:info lolipop --data-dir
-dokku couchdb:info lolipop --dsn
-dokku couchdb:info lolipop --exposed-ports
-dokku couchdb:info lolipop --id
-dokku couchdb:info lolipop --internal-ip
-dokku couchdb:info lolipop --links
-dokku couchdb:info lolipop --service-root
-dokku couchdb:info lolipop --status
-dokku couchdb:info lolipop --version
+dokku couchdb:info lollipop --config-dir
+dokku couchdb:info lollipop --data-dir
+dokku couchdb:info lollipop --dsn
+dokku couchdb:info lollipop --exposed-ports
+dokku couchdb:info lollipop --id
+dokku couchdb:info lollipop --internal-ip
+dokku couchdb:info lollipop --links
+dokku couchdb:info lollipop --service-root
+dokku couchdb:info lollipop --status
+dokku couchdb:info lollipop --version
 ```
 
 ### list all couchdb services
@@ -163,13 +163,13 @@ flags:
 You can tail logs for a particular service:
 
 ```shell
-dokku couchdb:logs lolipop
+dokku couchdb:logs lollipop
 ```
 
 By default, logs will not be tailed, but you can do this with the --tail flag:
 
 ```shell
-dokku couchdb:logs lolipop --tail
+dokku couchdb:logs lollipop --tail
 ```
 
 ### link the couchdb service to the app
@@ -189,24 +189,24 @@ A couchdb service can be linked to a container. This will use native docker link
 > NOTE: this will restart your app
 
 ```shell
-dokku couchdb:link lolipop playground
+dokku couchdb:link lollipop playground
 ```
 
 The following environment variables will be set automatically by docker (not on the app itself, so they won’t be listed when calling dokku config):
 
 ```
-DOKKU_COUCHDB_LOLIPOP_NAME=/lolipop/DATABASE
-DOKKU_COUCHDB_LOLIPOP_PORT=tcp://172.17.0.1:5984
-DOKKU_COUCHDB_LOLIPOP_PORT_5984_TCP=tcp://172.17.0.1:5984
-DOKKU_COUCHDB_LOLIPOP_PORT_5984_TCP_PROTO=tcp
-DOKKU_COUCHDB_LOLIPOP_PORT_5984_TCP_PORT=5984
-DOKKU_COUCHDB_LOLIPOP_PORT_5984_TCP_ADDR=172.17.0.1
+DOKKU_COUCHDB_LOLLIPOP_NAME=/lollipop/DATABASE
+DOKKU_COUCHDB_LOLLIPOP_PORT=tcp://172.17.0.1:5984
+DOKKU_COUCHDB_LOLLIPOP_PORT_5984_TCP=tcp://172.17.0.1:5984
+DOKKU_COUCHDB_LOLLIPOP_PORT_5984_TCP_PROTO=tcp
+DOKKU_COUCHDB_LOLLIPOP_PORT_5984_TCP_PORT=5984
+DOKKU_COUCHDB_LOLLIPOP_PORT_5984_TCP_ADDR=172.17.0.1
 ```
 
 The following will be set on the linked application by default:
 
 ```
-COUCHDB_URL=http://lolipop:SOME_PASSWORD@dokku-couchdb-lolipop:5984/lolipop
+COUCHDB_URL=http://lollipop:SOME_PASSWORD@dokku-couchdb-lollipop:5984/lollipop
 ```
 
 The host exposed here only works internally in docker containers. If you want your container to be reachable from outside, you should use the `expose` subcommand. Another service can be linked to your app:
@@ -219,13 +219,13 @@ It is possible to change the protocol for `COUCHDB_URL` by setting the environme
 
 ```shell
 dokku config:set playground COUCHDB_DATABASE_SCHEME=http2
-dokku couchdb:link lolipop playground
+dokku couchdb:link lollipop playground
 ```
 
 This will cause `COUCHDB_URL` to be set as:
 
 ```
-http2://lolipop:SOME_PASSWORD@dokku-couchdb-lolipop:5984/lolipop
+http2://lollipop:SOME_PASSWORD@dokku-couchdb-lollipop:5984/lollipop
 ```
 
 ### unlink the couchdb service from the app
@@ -240,7 +240,7 @@ You can unlink a couchdb service:
 > NOTE: this will restart your app and unset related environment variables
 
 ```shell
-dokku couchdb:unlink lolipop playground
+dokku couchdb:unlink lollipop playground
 ```
 
 ### Service Lifecycle
@@ -257,7 +257,7 @@ dokku couchdb:connect <service>
 Connect to the service via the couchdb connection tool:
 
 ```shell
-dokku couchdb:connect lolipop
+dokku couchdb:connect lollipop
 ```
 
 ### enter or run a command in a running couchdb service container
@@ -270,13 +270,13 @@ dokku couchdb:enter <service>
 A bash prompt can be opened against a running service. Filesystem changes will not be saved to disk.
 
 ```shell
-dokku couchdb:enter lolipop
+dokku couchdb:enter lollipop
 ```
 
 You may also run a command directly against the service. Filesystem changes will not be saved to disk.
 
 ```shell
-dokku couchdb:enter lolipop touch /tmp/test
+dokku couchdb:enter lollipop touch /tmp/test
 ```
 
 ### expose a couchdb service on custom host:port if provided (random port on the 0.0.0.0 interface if otherwise unspecified)
@@ -289,13 +289,13 @@ dokku couchdb:expose <service> <ports...>
 Expose the service on the service's normal ports, allowing access to it from the public interface (`0.0.0.0`):
 
 ```shell
-dokku couchdb:expose lolipop 5984
+dokku couchdb:expose lollipop 5984
 ```
 
 Expose the service on the service's normal ports, with the first on a specified ip adddress (127.0.0.1):
 
 ```shell
-dokku couchdb:expose lolipop 127.0.0.1:5984
+dokku couchdb:expose lollipop 127.0.0.1:5984
 ```
 
 ### unexpose a previously exposed couchdb service
@@ -308,7 +308,7 @@ dokku couchdb:unexpose <service>
 Unexpose the service, removing access to it from the public interface (`0.0.0.0`):
 
 ```shell
-dokku couchdb:unexpose lolipop
+dokku couchdb:unexpose lollipop
 ```
 
 ### promote service <service> as COUCHDB_URL in <app>
@@ -337,7 +337,7 @@ This will replace `COUCHDB_URL` with the url from other_service and generate ano
 ```
 COUCHDB_URL=http://other_service:ANOTHER_PASSWORD@dokku-couchdb-other-service:5984/other_service
 DOKKU_COUCHDB_BLUE_URL=http://other_service:ANOTHER_PASSWORD@dokku-couchdb-other-service:5984/other_service
-DOKKU_COUCHDB_SILVER_URL=http://lolipop:SOME_PASSWORD@dokku-couchdb-lolipop:5984/lolipop
+DOKKU_COUCHDB_SILVER_URL=http://lollipop:SOME_PASSWORD@dokku-couchdb-lollipop:5984/lollipop
 ```
 
 ### start a previously stopped couchdb service
@@ -350,7 +350,7 @@ dokku couchdb:start <service>
 Start the service:
 
 ```shell
-dokku couchdb:start lolipop
+dokku couchdb:start lollipop
 ```
 
 ### stop a running couchdb service
@@ -363,7 +363,7 @@ dokku couchdb:stop <service>
 Stop the service and the running container:
 
 ```shell
-dokku couchdb:stop lolipop
+dokku couchdb:stop lollipop
 ```
 
 ### graceful shutdown and restart of the couchdb service container
@@ -376,7 +376,7 @@ dokku couchdb:restart <service>
 Restart the service:
 
 ```shell
-dokku couchdb:restart lolipop
+dokku couchdb:restart lollipop
 ```
 
 ### upgrade service <service> to the specified versions
@@ -398,7 +398,7 @@ flags:
 You can upgrade an existing service to a new image or image-version:
 
 ```shell
-dokku couchdb:upgrade lolipop
+dokku couchdb:upgrade lollipop
 ```
 
 ### Service Automation
@@ -439,7 +439,7 @@ flags:
 You can clone an existing service to a new one:
 
 ```shell
-dokku couchdb:clone lolipop lolipop-2
+dokku couchdb:clone lollipop lollipop-2
 ```
 
 ### check if the couchdb service exists
@@ -449,10 +449,10 @@ dokku couchdb:clone lolipop lolipop-2
 dokku couchdb:exists <service>
 ```
 
-Here we check if the lolipop couchdb service exists.
+Here we check if the lollipop couchdb service exists.
 
 ```shell
-dokku couchdb:exists lolipop
+dokku couchdb:exists lollipop
 ```
 
 ### check if the couchdb service is linked to an app
@@ -462,10 +462,10 @@ dokku couchdb:exists lolipop
 dokku couchdb:linked <service> <app>
 ```
 
-Here we check if the lolipop couchdb service is linked to the `playground` app.
+Here we check if the lollipop couchdb service is linked to the `playground` app.
 
 ```shell
-dokku couchdb:linked lolipop playground
+dokku couchdb:linked lollipop playground
 ```
 
 ### list all apps linked to the couchdb service
@@ -475,10 +475,10 @@ dokku couchdb:linked lolipop playground
 dokku couchdb:links <service>
 ```
 
-List all apps linked to the `lolipop` couchdb service.
+List all apps linked to the `lollipop` couchdb service.
 
 ```shell
-dokku couchdb:links lolipop
+dokku couchdb:links lollipop
 ```
 
 ### Data Management
@@ -495,7 +495,7 @@ dokku couchdb:import <service>
 Import a datastore dump:
 
 ```shell
-dokku couchdb:import lolipop < database.dump
+dokku couchdb:import lollipop < database.dump
 ```
 
 ### export a dump of the couchdb service database
@@ -508,13 +508,13 @@ dokku couchdb:export <service>
 By default, datastore output is exported to stdout:
 
 ```shell
-dokku couchdb:export lolipop
+dokku couchdb:export lollipop
 ```
 
 You can redirect this output to a file:
 
 ```shell
-dokku couchdb:export lolipop > lolipop.dump
+dokku couchdb:export lollipop > lollipop.dump
 ```
 
 ### Backups
@@ -535,25 +535,25 @@ dokku couchdb:backup-auth <service> <aws-access-key-id> <aws-secret-access-key> 
 Setup s3 backup authentication:
 
 ```shell
-dokku couchdb:backup-auth lolipop AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY
+dokku couchdb:backup-auth lollipop AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY
 ```
 
 Setup s3 backup authentication with different region:
 
 ```shell
-dokku couchdb:backup-auth lolipop AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_REGION
+dokku couchdb:backup-auth lollipop AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_REGION
 ```
 
 Setup s3 backup authentication with different signature version and endpoint:
 
 ```shell
-dokku couchdb:backup-auth lolipop AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_REGION AWS_SIGNATURE_VERSION ENDPOINT_URL
+dokku couchdb:backup-auth lollipop AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_REGION AWS_SIGNATURE_VERSION ENDPOINT_URL
 ```
 
 More specific example for minio auth:
 
 ```shell
-dokku couchdb:backup-auth lolipop MINIO_ACCESS_KEY_ID MINIO_SECRET_ACCESS_KEY us-east-1 s3v4 https://YOURMINIOSERVICE
+dokku couchdb:backup-auth lollipop MINIO_ACCESS_KEY_ID MINIO_SECRET_ACCESS_KEY us-east-1 s3v4 https://YOURMINIOSERVICE
 ```
 
 ### remove backup authentication for the couchdb service
@@ -566,7 +566,7 @@ dokku couchdb:backup-deauth <service>
 Remove s3 authentication:
 
 ```shell
-dokku couchdb:backup-deauth lolipop
+dokku couchdb:backup-deauth lollipop
 ```
 
 ### create a backup of the couchdb service to an existing s3 bucket
@@ -580,16 +580,16 @@ flags:
 
 - `-u|--use-iam`: use the IAM profile associated with the current server
 
-Backup the `lolipop` service to the `my-s3-bucket` bucket on `AWS`:`
+Backup the `lollipop` service to the `my-s3-bucket` bucket on `AWS`:`
 
 ```shell
-dokku couchdb:backup lolipop my-s3-bucket --use-iam
+dokku couchdb:backup lollipop my-s3-bucket --use-iam
 ```
 
 Restore a backup file (assuming it was extracted via `tar -xf backup.tgz`):
 
 ```shell
-dokku couchdb:import lolipop < backup-folder/export
+dokku couchdb:import lollipop < backup-folder/export
 ```
 
 ### set encryption for all future backups of couchdb service
@@ -602,7 +602,7 @@ dokku couchdb:backup-set-encryption <service> <passphrase>
 Set the GPG-compatible passphrase for encrypting backups for backups:
 
 ```shell
-dokku couchdb:backup-set-encryption lolipop
+dokku couchdb:backup-set-encryption lollipop
 ```
 
 ### unset encryption for future backups of the couchdb service
@@ -615,7 +615,7 @@ dokku couchdb:backup-unset-encryption <service>
 Unset the `GPG` encryption passphrase for backups:
 
 ```shell
-dokku couchdb:backup-unset-encryption lolipop
+dokku couchdb:backup-unset-encryption lollipop
 ```
 
 ### schedule a backup of the couchdb service
@@ -634,13 +634,13 @@ Schedule a backup:
 > 'schedule' is a crontab expression, eg. "0 3 * * *" for each day at 3am
 
 ```shell
-dokku couchdb:backup-schedule lolipop "0 3 * * *" my-s3-bucket
+dokku couchdb:backup-schedule lollipop "0 3 * * *" my-s3-bucket
 ```
 
 Schedule a backup and authenticate via iam:
 
 ```shell
-dokku couchdb:backup-schedule lolipop "0 3 * * *" my-s3-bucket --use-iam
+dokku couchdb:backup-schedule lollipop "0 3 * * *" my-s3-bucket --use-iam
 ```
 
 ### cat the contents of the configured backup cronfile for the service
@@ -653,7 +653,7 @@ dokku couchdb:backup-schedule-cat <service>
 Cat the contents of the configured backup cronfile for the service:
 
 ```shell
-dokku couchdb:backup-schedule-cat lolipop
+dokku couchdb:backup-schedule-cat lollipop
 ```
 
 ### unschedule the backup of the couchdb service
@@ -666,7 +666,7 @@ dokku couchdb:backup-unschedule <service>
 Remove the scheduled backup from cron:
 
 ```shell
-dokku couchdb:backup-unschedule lolipop
+dokku couchdb:backup-unschedule lollipop
 ```
 
 ### Disabling `docker pull` calls
