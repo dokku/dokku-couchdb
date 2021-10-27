@@ -40,7 +40,7 @@ couchdb:link <service> <app> [--link-flags...]     # link the couchdb service to
 couchdb:linked <service> <app>                     # check if the couchdb service is linked to an app
 couchdb:links <service>                            # list all apps linked to the couchdb service
 couchdb:list                                       # list all couchdb services
-couchdb:logs <service> [-t|--tail]                 # print the most recent log(s) for this service
+couchdb:logs <service> [-t|--tail] <tail-num-optional> # print the most recent log(s) for this service
 couchdb:promote <service> <app>                    # promote service <service> as COUCHDB_URL in <app>
 couchdb:restart <service>                          # graceful shutdown and restart of the couchdb service container
 couchdb:start <service>                            # start a previously stopped couchdb service
@@ -153,12 +153,12 @@ dokku couchdb:list
 
 ```shell
 # usage
-dokku couchdb:logs <service> [-t|--tail]
+dokku couchdb:logs <service> [-t|--tail] <tail-num-optional>
 ```
 
 flags:
 
-- `-t|--tail`: do not stop when end of the logs are reached and wait for additional output
+- `-t|--tail [<tail-num>]`: do not stop when end of the logs are reached and wait for additional output
 
 You can tail logs for a particular service:
 
@@ -170,6 +170,12 @@ By default, logs will not be tailed, but you can do this with the --tail flag:
 
 ```shell
 dokku couchdb:logs lollipop --tail
+```
+
+The default tail setting is to show all logs, but an initial count can also be specified:
+
+```shell
+dokku couchdb:logs lollipop --tail 5
 ```
 
 ### link the couchdb service to the app
