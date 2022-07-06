@@ -1,4 +1,4 @@
 [plugin]
 description = "dokku couchdb service plugin"
-version = "1.21.5"
+version = "1.21.6"
 [plugin.config]
