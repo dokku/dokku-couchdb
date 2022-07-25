@@ -33,7 +33,7 @@ teardown() {
 }
 
 @test "($PLUGIN_COMMAND_PREFIX:import) success" {
-  run dokku "$PLUGIN_COMMAND_PREFIX:import" ls < "/tmp/fake.json"
+  run dokku "$PLUGIN_COMMAND_PREFIX:import" ls <"/tmp/fake.json"
   echo "output: $output"
   echo "status: $status"
   assert_success
