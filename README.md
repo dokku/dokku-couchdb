@@ -41,6 +41,7 @@ couchdb:linked <service> <app>                     # check if the couchdb servic
 couchdb:links <service>                            # list all apps linked to the couchdb service
 couchdb:list                                       # list all couchdb services
 couchdb:logs <service> [-t|--tail] <tail-num-optional> # print the most recent log(s) for this service
+couchdb:pause <service>                            # pause a running couchdb service
 couchdb:promote <service> <app>                    # promote service <service> as COUCHDB_URL in <app>
 couchdb:restart <service>                          # graceful shutdown and restart of the couchdb service container
 couchdb:start <service>                            # start a previously stopped couchdb service
@@ -370,10 +371,23 @@ dokku couchdb:start lollipop
 dokku couchdb:stop <service>
 ```
 
-Stop the service and the running container:
+Stop the service and removes the running container:
 
 ```shell
 dokku couchdb:stop lollipop
+```
+
+### pause a running couchdb service
+
+```shell
+# usage
+dokku couchdb:pause <service>
+```
+
+Pause the running container for the service:
+
+```shell
+dokku couchdb:pause lollipop
 ```
 
 ### graceful shutdown and restart of the couchdb service container
