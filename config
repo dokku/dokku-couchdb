@@ -3,7 +3,8 @@ _DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 export COUCHDB_IMAGE=${COUCHDB_IMAGE:="$(awk -F '[ :]' '{print $2}' "${_DIR}/Dockerfile")"}
 export COUCHDB_IMAGE_VERSION=${COUCHDB_IMAGE_VERSION:="$(awk -F '[ :]' '{print $3}' "${_DIR}/Dockerfile")"}
 export COUCHDB_ROOT=${COUCHDB_ROOT:="$DOKKU_LIB_ROOT/services/couchdb"}
-export COUCHDB_HOST_ROOT=${COUCHDB_HOST_ROOT:=$COUCHDB_ROOT}
+export DOKKU_LIB_HOST_ROOT=${DOKKU_LIB_HOST_ROOT:=$DOKKU_LIB_ROOT}
+export COUCHDB_HOST_ROOT=${COUCHDB_HOST_ROOT:="$DOKKU_LIB_HOST_ROOT/services/couchdb"}
 
 export PLUGIN_UNIMPLEMENTED_SUBCOMMANDS=()
 export PLUGIN_COMMAND_PREFIX="couchdb"
