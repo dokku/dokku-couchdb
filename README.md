@@ -112,7 +112,10 @@ flags:
 - `--exposed-ports`: show service exposed ports
 - `--id`: show the service container id
 - `--internal-ip`: show the service internal ip
+- `--initial-network`: show the initial network being connected to
 - `--links`: show the service app links
+- `--post-create-network`: show the networks to attach to after service container creation
+- `--post-start-network`: show the networks to attach to after service container start
 - `--service-root`: show the service root directory
 - `--status`: show the service running status
 - `--version`: show the service image version
@@ -132,7 +135,10 @@ dokku couchdb:info lollipop --dsn
 dokku couchdb:info lollipop --exposed-ports
 dokku couchdb:info lollipop --id
 dokku couchdb:info lollipop --internal-ip
+dokku couchdb:info lollipop --initial-network
 dokku couchdb:info lollipop --links
+dokku couchdb:info lollipop --post-create-network
+dokku couchdb:info lollipop --post-start-network
 dokku couchdb:info lollipop --service-root
 dokku couchdb:info lollipop --status
 dokku couchdb:info lollipop --version
