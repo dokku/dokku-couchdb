@@ -44,6 +44,7 @@ couchdb:logs <service> [-t|--tail] <tail-num-optional> # print the most recent l
 couchdb:pause <service>                            # pause a running couchdb service
 couchdb:promote <service> <app>                    # promote service <service> as COUCHDB_URL in <app>
 couchdb:restart <service>                          # graceful shutdown and restart of the couchdb service container
+couchdb:set <service> <key> <value>                # set or clear a property for a service
 couchdb:start <service>                            # start a previously stopped couchdb service
 couchdb:stop <service>                             # stop a running couchdb service
 couchdb:unexpose <service>                         # unexpose a previously exposed couchdb service
@@ -248,6 +249,25 @@ You can unlink a couchdb service:
 
 ```shell
 dokku couchdb:unlink lollipop playground
+```
+
+### set or clear a property for a service
+
+```shell
+# usage
+dokku couchdb:set <service> <key> <value>
+```
+
+Set the network to attach after the service container is started:
+
+```shell
+dokku couchdb:set lollipop post-create-network custom-network
+```
+
+Unset the post-create-network value:
+
+```shell
+dokku couchdb:set lollipop post-create-network
 ```
 
 ### Service Lifecycle
