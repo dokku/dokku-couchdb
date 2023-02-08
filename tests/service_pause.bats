@@ -2,13 +2,11 @@
 load test_helper
 
 setup() {
-  dokku trace:on
-  dokku "$PLUGIN_COMMAND_PREFIX:create" l
+  dokku "$PLUGIN_COMMAND_PREFIX:create" ls
 }
 
 teardown() {
-  dokku trace:off
-  dokku --force "$PLUGIN_COMMAND_PREFIX:destroy" l
+  dokku --force "$PLUGIN_COMMAND_PREFIX:destroy" ls
 }
 
 @test "($PLUGIN_COMMAND_PREFIX:pause) error when there are no arguments" {
@@ -22,6 +20,6 @@ teardown() {
 }
 
 @test "($PLUGIN_COMMAND_PREFIX:pause) success" {
-  run dokku "$PLUGIN_COMMAND_PREFIX:pause" l
+  run dokku "$PLUGIN_COMMAND_PREFIX:pause" ls
   assert_success
 }
