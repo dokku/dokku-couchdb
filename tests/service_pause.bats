@@ -2,10 +2,12 @@
 load test_helper
 
 setup() {
+  dokku trace:on
   dokku "$PLUGIN_COMMAND_PREFIX:create" l
 }
 
 teardown() {
+  dokku trace:off
   dokku --force "$PLUGIN_COMMAND_PREFIX:destroy" l
 }
 
