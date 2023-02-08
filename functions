@@ -87,6 +87,8 @@ service_create_container() {
   DOCKER_ARGS+=("--volume=$SERVICE_HOST_ROOT/config:/opt/couchdb/etc/local.d")
   DOCKER_ARGS+=("--volume=$SERVICE_HOST_ROOT/data:/opt/couchdb/data")
 
+  ls -lah $SERVICE_ROOT/ENV $SERVICE_HOST_ROOT/config $SERVICE_HOST_ROOT/data
+
   declare -a LINK_CONTAINER_DOCKER_ARGS
   LINK_CONTAINER_DOCKER_ARGS=()
   LINK_CONTAINER_DOCKER_ARGS+=("--rm")
@@ -114,7 +116,7 @@ service_create_container() {
   fi
 
   # shellcheck disable=SC2086
-  "$DOCKER_BIN" container create "${DOCKER_ARGS[@]}" "$PLUGIN_IMAGE:$PLUGIN_IMAGE_VERSION" $CONFIG_OPTIONS >/dev/null
+  "$DOCKER_BIN" container create "${DOCKER_ARGS[@]}" "$PLUGIN_IMAGE:$PLUGIN_IMAGE_VERSION" $CONFIG_OPTIONS
 
   if [[ -n "$(fn-plugin-property-get "$PLUGIN_COMMAND_PREFIX" "$SERVICE" "post-create-network")" ]]; then
     dokku_log_verbose_quiet "Connecting to networks after container create"
