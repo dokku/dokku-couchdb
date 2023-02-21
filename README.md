@@ -200,6 +200,7 @@ flags:
 
 - `-a|--alias "BLUE_DATABASE"`: an alternative alias to use for linking to an app via environment variable
 - `-q|--querystring "pool=5"`: ampersand delimited querystring arguments to append to the service link
+- `-n|--no-restart "false"`: whether or not to restart the app on link (default: true)
 
 A couchdb service can be linked to a container. This will use native docker links via the docker-options plugin. Here we link it to our `playground` app.
 
@@ -245,12 +246,22 @@ This will cause `COUCHDB_URL` to be set as:
 http2://lollipop:SOME_PASSWORD@dokku-couchdb-lollipop:5984/lollipop
 ```
 
+If you specify `COUCHDB_DATABASE_SCHEME` to equal `http`, we`ll also automatically adjust `COUCHDB_URL` to match the http interface:
+
+```
+http://lollipop:SOME_PASSWORD@dokku-couchdb-lollipop:${PLUGIN_DATASTORE_PORTS[1]}
+```
+
 ### unlink the couchdb service from the app
 
 ```shell
 # usage
 dokku couchdb:unlink <service> <app>
 ```
+
+flags:
+
+- `-n|--no-restart "false"`: whether or not to restart the app on unlink (default: true)
 
 You can unlink a couchdb service:
 
@@ -453,7 +464,7 @@ flags:
 - `-I|--image-version IMAGE_VERSION`: the image version to start the service with
 - `-N|--initial-network INITIAL_NETWORK`: the initial network to attach the service to
 - `-P|--post-create-network NETWORKS`: a comman-separated list of networks to attach the service container to after service creation
-- `-R|--restart-apps "true"`: whether to force an app restart
+- `-R|--restart-apps "true"`: whether or not to force an app restart (default: false)
 - `-S|--post-start-network NETWORKS`: a comman-separated list of networks to attach the service container to after service start
 - `-s|--shm-size SHM_SIZE`: override shared memory size for couchdb docker container
 
