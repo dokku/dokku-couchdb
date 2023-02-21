@@ -62,7 +62,7 @@ teardown() {
   echo "status: $status"
   url=$(dokku config:get my-app COUCHDB_URL)
   password="$(sudo cat "$PLUGIN_DATA_ROOT/ls/PASSWORD")"
-  assert_contains "$url" "http://ls:$password@dokku-couchdb-ls:5984/ls"
+  assert_contains "$url" "http://lss:$password@dokku-couchdb-ls:5984/ls"
   assert_success
   dokku "$PLUGIN_COMMAND_PREFIX:unlink" ls my-app
 }
@@ -95,7 +95,7 @@ teardown() {
   dokku "$PLUGIN_COMMAND_PREFIX:link" ls my-app
   url=$(dokku config:get my-app COUCHDB_URL)
   password="$(sudo cat "$PLUGIN_DATA_ROOT/ls/PASSWORD")"
-  assert_contains "$url" "couchdb2://ls:$password@dokku-couchdb-ls:5984/ls"
+  assert_contains "$url" "couchdb2://lss:$password@dokku-couchdb-ls:5984/ls"
   assert_success
   dokku "$PLUGIN_COMMAND_PREFIX:unlink" ls my-app
 }
@@ -112,7 +112,7 @@ teardown() {
   dokku "$PLUGIN_COMMAND_PREFIX:link" ls my-app --alias "ALIAS"
   url=$(dokku config:get my-app ALIAS_URL)
   password="$(sudo cat "$PLUGIN_DATA_ROOT/ls/PASSWORD")"
-  assert_contains "$url" "http://ls:$password@dokku-couchdb-ls:5984/ls"
+  assert_contains "$url" "http://lss:$password@dokku-couchdb-ls:5984/ls"
   assert_success
   dokku "$PLUGIN_COMMAND_PREFIX:unlink" ls my-app
 }
