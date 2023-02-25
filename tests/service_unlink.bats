@@ -51,3 +51,27 @@ teardown() {
   config=$(dokku config:get my-app COUCHDB_URL || true)
   assert_equal "$config" ""
 }
+
+@test "($PLUGIN_COMMAND_PREFIX:unlink) respects --no-restart" {
+  run dokku "$PLUGIN_COMMAND_PREFIX:link" ls my-app
+  echo "output: $output"
+  echo "status: $status"
+  assert_success
+
+  run dokku "$PLUGIN_COMMAND_PREFIX:unlink" ls my-app
+  echo "output: $output"
+  echo "status: $status"
+  assert_output_contains "Skipping restart of linked app" 0
+  assert_success
+
+  run dokku "$PLUGIN_COMMAND_PREFIX:link" ls my-app
+  echo "output: $output"
+  echo "status: $status"
+  assert_success
+
+  run dokku "$PLUGIN_COMMAND_PREFIX:unlink" ls my-app --no-restart
+  echo "output: $output"
+  echo "status: $status"
+  assert_output_contains "Skipping restart of linked app"
+  assert_success
+}
