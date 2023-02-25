@@ -246,12 +246,6 @@ This will cause `COUCHDB_URL` to be set as:
 http2://lollipop:SOME_PASSWORD@dokku-couchdb-lollipop:5984/lollipop
 ```
 
-If you specify `COUCHDB_DATABASE_SCHEME` to equal `http`, we`ll also automatically adjust `COUCHDB_URL` to match the http interface:
-
-```
-http://lollipop:SOME_PASSWORD@dokku-couchdb-lollipop:${PLUGIN_DATASTORE_PORTS[1]}
-```
-
 ### unlink the couchdb service from the app
 
 ```shell
