@@ -1,6 +1,6 @@
 # dokku couchdb [![Build Status](https://img.shields.io/github/actions/workflow/status/dokku/dokku-couchdb/ci.yml?branch=master&style=flat-square "Build Status")](https://github.com/dokku/dokku-couchdb/actions/workflows/ci.yml?query=branch%3Amaster) [![IRC Network](https://img.shields.io/badge/irc-libera-blue.svg?style=flat-square "IRC Libera")](https://webchat.libera.chat/?channels=dokku)
 
-Official couchdb plugin for dokku. Currently defaults to installing [couchdb 3.3.2](https://hub.docker.com/_/couchdb/).
+Official couchdb plugin for dokku. Currently defaults to installing [couchdb 3.3.3](https://hub.docker.com/_/couchdb/).
 
 ## Requirements
 
@@ -85,7 +85,7 @@ Create a couchdb service named lollipop:
 dokku couchdb:create lollipop
 ```
 
-You can also specify the image and image version to use for the service. It _must_ be compatible with the couchdb image.
+You can also specify the image and image version to use for the service. It *must* be compatible with the couchdb image.
 
 ```shell
 export COUCHDB_IMAGE="couchdb"
@@ -701,7 +701,7 @@ flags:
 
 Schedule a backup:
 
-> 'schedule' is a crontab expression, eg. "0 3 \* \* \*" for each day at 3am
+> 'schedule' is a crontab expression, eg. "0 3 * * *" for each day at 3am
 
 ```shell
 dokku couchdb:backup-schedule lollipop "0 3 * * *" my-s3-bucket
