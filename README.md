@@ -1,6 +1,6 @@
 # dokku couchdb [![Build Status](https://img.shields.io/github/actions/workflow/status/dokku/dokku-couchdb/ci.yml?branch=master&style=flat-square "Build Status")](https://github.com/dokku/dokku-couchdb/actions/workflows/ci.yml?query=branch%3Amaster) [![IRC Network](https://img.shields.io/badge/irc-libera-blue.svg?style=flat-square "IRC Libera")](https://webchat.libera.chat/?channels=dokku)
 
-Official couchdb plugin for dokku. Currently defaults to installing [couchdb 3.3.3](https://hub.docker.com/_/couchdb/).
+Official couchdb plugin for dokku. Currently defaults to installing [couchdb 3.4.1](https://hub.docker.com/_/couchdb/).
 
 ## Requirements
 
