@@ -1,1 +1,1 @@
-FROM couchdb:3.5.0
+FROM couchdb:3.5.1
