@@ -4,7 +4,7 @@ load test_helper
 @test "($PLUGIN_COMMAND_PREFIX:create) success" {
   run dokku "$PLUGIN_COMMAND_PREFIX:create" ls
   assert_contains "${lines[*]}" "container created: ls"
-  dokku --force "$PLUGIN_COMMAND_PREFIX:destroy" ls
+  dokku "$PLUGIN_COMMAND_PREFIX:destroy" ls -f
 }
 
 @test "($PLUGIN_COMMAND_PREFIX:create) service with dashes" {
@@ -13,7 +13,7 @@ load test_helper
   assert_contains "${lines[*]}" "dokku-$PLUGIN_COMMAND_PREFIX-service-with-dashes"
   assert_contains "${lines[*]}" "service_with_dashes"
 
-  dokku --force "$PLUGIN_COMMAND_PREFIX:destroy" service-with-dashes
+  dokku "$PLUGIN_COMMAND_PREFIX:destroy" service-with-dashes -f
 }
 
 @test "($PLUGIN_COMMAND_PREFIX:create) error when there are no arguments" {

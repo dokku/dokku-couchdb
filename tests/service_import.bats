@@ -7,7 +7,7 @@ setup() {
 }
 
 teardown() {
-  dokku --force "$PLUGIN_COMMAND_PREFIX:destroy" ls
+  dokku "$PLUGIN_COMMAND_PREFIX:destroy" ls -f
   rm -f "/tmp/fake.json"
 }
 

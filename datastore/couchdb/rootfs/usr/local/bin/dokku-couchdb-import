@@ -1,0 +1,64 @@
+#!/usr/bin/env python3
+"""Replaces a couchdb database with the dump read from stdin.
+
+An import replaces: the database is deleted and remade before the documents are
+written, so what is read back afterwards is what was in the dump and nothing
+that happened to be there before.
+"""
+import base64
+import json
+import os
+import sys
+import urllib.error
+import urllib.request
+
+HOST = os.environ.get("COUCHDB_HOST", "127.0.0.1")
+PORT = os.environ.get("COUCHDB_PORT", "5984")
+DATABASE = os.environ["COUCHDB_DATABASE"]
+USER = os.environ["COUCHDB_USER"]
+PASSWORD = os.environ["COUCHDB_PASSWORD"]
+
+
+def request(path, method="GET", body=None):
+    url = "http://{}:{}/{}".format(HOST, PORT, path)
+    credentials = base64.b64encode("{}:{}".format(USER, PASSWORD).encode()).decode()
+    headers = {"Authorization": "Basic " + credentials, "Content-Type": "application/json"}
+    payload = json.dumps(body).encode() if body is not None else None
+    message = urllib.request.Request(url, data=payload, headers=headers, method=method)
+
+    with urllib.request.urlopen(message) as response:
+        return json.load(response)
+
+
+def main():
+    dump = json.load(sys.stdin)
+    documents = dump.get("docs", [])
+
+    # a revision belongs to the database the document came from, and offering
+    # one to a database that has never seen the document is refused
+    for document in documents:
+        document.pop("_rev", None)
+
+    try:
+        request(DATABASE, method="DELETE")
+    except urllib.error.HTTPError as error:
+        if error.code != 404:
+            sys.stderr.write("unable to remove {}: {}\n".format(DATABASE, error))
+            return 1
+
+    request(DATABASE, method="PUT")
+
+    if not documents:
+        return 0
+
+    written = request("{}/_bulk_docs".format(DATABASE), method="POST", body={"docs": documents})
+    for result in written:
+        if result.get("error"):
+            sys.stderr.write("unable to write {}: {}\n".format(result.get("id"), result))
+            return 1
+
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
