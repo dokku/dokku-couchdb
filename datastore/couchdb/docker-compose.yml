@@ -1,0 +1,83 @@
+---
+services:
+  couchdb:
+    image: "{{ .Image }}:{{ .ImageVersion }}"
+
+    # the image creates the admin account from these on first boot. It creates
+    # no database, which is what the post create hook is for.
+    environment:
+      COUCHDB_DBNAME: "{{ .Database }}"
+      COUCHDB_PASSWORD: "{{ .Secret.password }}"
+      COUCHDB_USER: "{{ .ServiceName }}"
+
+    volumes:
+      - type: bind
+        source: "{{ .HostRoot }}/config"
+        target: /opt/couchdb/etc/local.d
+      - type: bind
+        source: "{{ .HostRoot }}/data"
+        target: /opt/couchdb/data
+
+    ports:
+      - name: native
+        target: 5984
+        primary: true
+
+x-dokku:
+  plugin: couchdb
+  title: CouchDB
+
+  # http rather than couchdb: a linked app talks to it over http, and this is
+  # the scheme the bash plugin has always handed over
+  scheme: http
+  alias: COUCHDB
+
+  dsn: "{{ .Scheme }}://{{ .ServiceName }}:{{ .Secret.password }}@{{ .Host }}:{{ .Port.native }}/{{ .Database }}"
+  wait: native
+
+  secrets:
+    password:
+      file: PASSWORD
+      length: 64
+      env: SERVICE_PASSWORD
+
+  hooks:
+    post_create:
+      # beside the service rather than inside it, for the same reason the dumps
+      # are: the couchdb image ships nothing that can read json
+      mode: sidecar
+      image: dokku/s3backup:0.18.0
+      exec: ["dokku-couchdb-create-database"]
+      env:
+        COUCHDB_DATABASE: "{{ .Database }}"
+        COUCHDB_USER: "{{ .ServiceName }}"
+        COUCHDB_PASSWORD: "{{ .Secret.password }}"
+
+  commands:
+    # no connect: couchdb speaks http and ships no client to connect with. The
+    # bash plugin advertises the command and fails with "Not yet implemented",
+    # which deriving what a datastore can do from what it declares fixes.
+
+    # both dumps run beside the service, in an image dokku already ships that
+    # has python. The couchdb image has no jq, no python and not even perl's
+    # own json module, which is why the bash plugin downloads a third party
+    # script into the running container, from a branch rather than a tag, on
+    # every export and import.
+    export:
+      mode: sidecar
+      image: dokku/s3backup:0.18.0
+      exec: ["dokku-couchdb-export"]
+      env:
+        COUCHDB_DATABASE: "{{ .Database }}"
+        COUCHDB_USER: "{{ .ServiceName }}"
+        COUCHDB_PASSWORD: "{{ .Secret.password }}"
+
+    import:
+      mode: sidecar
+      image: dokku/s3backup:0.18.0
+      stdin: true
+      exec: ["dokku-couchdb-import"]
+      env:
+        COUCHDB_DATABASE: "{{ .Database }}"
+        COUCHDB_USER: "{{ .ServiceName }}"
+        COUCHDB_PASSWORD: "{{ .Secret.password }}"

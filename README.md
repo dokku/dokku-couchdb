@@ -1,56 +1,55 @@
 # dokku couchdb [![Build Status](https://img.shields.io/github/actions/workflow/status/dokku/dokku-couchdb/ci.yml?branch=master&style=flat-square "Build Status")](https://github.com/dokku/dokku-couchdb/actions/workflows/ci.yml?query=branch%3Amaster) [![IRC Network](https://img.shields.io/badge/irc-libera-blue.svg?style=flat-square "IRC Libera")](https://webchat.libera.chat/?channels=dokku)
 
-Official couchdb plugin for dokku. Currently defaults to installing [couchdb 3.5.1](https://hub.docker.com/_/couchdb/).
+Official couchdb plugin for dokku. Currently defaults to installing [couchdb 3.5.2.1](https://hub.docker.com/_/couchdb/).
 
 ## Requirements
 
-- dokku 0.19.x+
+- dokku 0.35.x+
 - docker 1.8.x
 
 ## Installation
 
 ```shell
-# on 0.19.x+
+# on 0.35.x+
 sudo dokku plugin:install https://github.com/dokku/dokku-couchdb.git --name couchdb
 ```
 
 ## Commands
 
 ```
-couchdb:app-links <app>                            # list all couchdb service links for a given app
-couchdb:backup <service> <bucket-name> [--use-iam] # create a backup of the couchdb service to an existing s3 bucket
-couchdb:backup-auth <service> <aws-access-key-id> <aws-secret-access-key> <aws-default-region> <aws-signature-version> <endpoint-url> # set up authentication for backups on the couchdb service
-couchdb:backup-deauth <service>                    # remove backup authentication for the couchdb service
-couchdb:backup-schedule <service> <schedule> <bucket-name> [--use-iam] # schedule a backup of the couchdb service
+couchdb:app-links [<app>]                          # list all CouchDB service links for a given app
+couchdb:backup <service> <bucket-name> [-u|--use-iam] # create a backup of the CouchDB service to an existing s3 bucket
+couchdb:backup-auth <service> <aws-access-key-id> <aws-secret-access-key> <aws-default-region> <aws-signature-version> <endpoint-url> # set up authentication for backups on the CouchDB service
+couchdb:backup-deauth <service>                    # remove backup authentication for the CouchDB service
+couchdb:backup-schedule <service> <schedule> <bucket-name> [-u|--use-iam] # schedule a backup of the CouchDB service
 couchdb:backup-schedule-cat <service>              # cat the contents of the configured backup cronfile for the service
-couchdb:backup-set-encryption <service> <passphrase> # set encryption for all future backups of couchdb service
-couchdb:backup-set-public-key-encryption <service> <public-key-id> # set GPG Public Key encryption for all future backups of couchdb service
-couchdb:backup-unschedule <service>                # unschedule the backup of the couchdb service
-couchdb:backup-unset-encryption <service>          # unset encryption for future backups of the couchdb service
-couchdb:backup-unset-public-key-encryption <service> # unset GPG Public Key encryption for future backups of the couchdb service
+couchdb:backup-set-encryption <service> <passphrase> # set encryption for all future backups of CouchDB service
+couchdb:backup-set-public-key-encryption <service> <public-key-id> # set GPG Public Key encryption for all future backups of CouchDB service
+couchdb:backup-unschedule <service>                # unschedule the backup of the CouchDB service
+couchdb:backup-unset-encryption <service>          # unset encryption for future backups of the CouchDB service
+couchdb:backup-unset-public-key-encryption <service> # unset GPG Public Key encryption for future backups of the CouchDB service
 couchdb:clone <service> <new-service> [--clone-flags...] # create container <new-name> then copy data from <name> into <new-name>
-couchdb:connect <service>                          # connect to the service via the couchdb connection tool
-couchdb:create <service> [--create-flags...]       # create a couchdb service
-couchdb:destroy <service> [-f|--force]             # delete the couchdb service/data/container if there are no links left
-couchdb:enter <service>                            # enter or run a command in a running couchdb service container
-couchdb:exists <service>                           # check if the couchdb service exists
-couchdb:export <service>                           # export a dump of the couchdb service database
-couchdb:expose <service> <ports...>                # expose a couchdb service on custom host:port if provided (random port on the 0.0.0.0 interface if otherwise unspecified)
-couchdb:import <service>                           # import a dump into the couchdb service database
-couchdb:info <service> [--single-info-flag]        # print the service information
-couchdb:link <service> <app> [--link-flags...]     # link the couchdb service to the app
-couchdb:linked <service> <app>                     # check if the couchdb service is linked to an app
-couchdb:links <service>                            # list all apps linked to the couchdb service
-couchdb:list                                       # list all couchdb services
-couchdb:logs <service> [-t|--tail] <tail-num-optional> # print the most recent log(s) for this service
-couchdb:pause <service>                            # pause a running couchdb service
-couchdb:promote <service> <app>                    # promote service <service> as COUCHDB_URL in <app>
-couchdb:restart <service>                          # graceful shutdown and restart of the couchdb service container
+couchdb:create <service> [--create-flags...]       # create a CouchDB service
+couchdb:destroy <service> [-f|--force]             # delete the CouchDB service/data/container if there are no links left
+couchdb:enter <service>                            # enter or run a command in a running CouchDB service container
+couchdb:exists <service>                           # check if the CouchDB service exists
+couchdb:export <service>                           # export a dump of the CouchDB service database
+couchdb:expose <service> <ports...>                # expose a CouchDB service on custom host:port if provided (random port on the 0.0.0.0 interface if otherwise unspecified)
+couchdb:import <service>                           # import a dump into the CouchDB service database
+couchdb:info <service> [--info-flags...]           # print the service information
+couchdb:link <service> [<app>] [--link-flags...]   # link the CouchDB service to the app
+couchdb:linked <service> [<app>]                   # check if the CouchDB service is linked to an app
+couchdb:links <service>                            # list all apps linked to the CouchDB service
+couchdb:list                                       # list all CouchDB services
+couchdb:logs <service> [-t|--tail [<tail-num>]]    # print the most recent log(s) for this service
+couchdb:pause <service>                            # pause a running CouchDB service
+couchdb:promote <service> [<app>]                  # promote service <service> as COUCHDB_URL in <app>
+couchdb:restart <service>                          # graceful shutdown and restart of the CouchDB service container
 couchdb:set <service> <key> <value>                # set or clear a property for a service
-couchdb:start <service>                            # start a previously stopped couchdb service
-couchdb:stop <service>                             # stop a running couchdb service
-couchdb:unexpose <service>                         # unexpose a previously exposed couchdb service
-couchdb:unlink <service> <app>                     # unlink the couchdb service from the app
+couchdb:start <service>                            # start a previously stopped CouchDB service
+couchdb:stop <service>                             # stop a running CouchDB service
+couchdb:unexpose <service>                         # unexpose a previously exposed CouchDB service
+couchdb:unlink <service> [<app>] [-n|--no-restart] # unlink the CouchDB service from the app
 couchdb:upgrade <service> [--upgrade-flags...]     # upgrade service <service> to the specified versions
 ```
 
@@ -60,7 +59,7 @@ Help for any commands can be displayed by specifying the command as an argument 
 
 ### Basic Usage
 
-### create a couchdb service
+### create a CouchDB service
 
 ```shell
 # usage
@@ -69,17 +68,17 @@ dokku couchdb:create <service> [--create-flags...]
 
 flags:
 
-- `-c|--config-options "--args --go=here"`: extra arguments to pass to the container create command (default: `None`)
-- `-C|--custom-env "USER=alpha;HOST=beta"`: semi-colon delimited environment variables to start the service with
-- `-i|--image IMAGE`: the image name to start the service with
-- `-I|--image-version IMAGE_VERSION`: the image version to start the service with
-- `-m|--memory MEMORY`: container memory limit in megabytes (default: unlimited)
-- `-N|--initial-network INITIAL_NETWORK`: the initial network to attach the service to
-- `-p|--password PASSWORD`: override the user-level service password
-- `-P|--post-create-network NETWORKS`: a comma-separated list of networks to attach the service container to after service creation
-- `-r|--root-password PASSWORD`: override the root-level service password
-- `-S|--post-start-network NETWORKS`: a comma-separated list of networks to attach the service container to after service start
-- `-s|--shm-size SHM_SIZE`: override shared memory size for couchdb docker container
+- `-c|--config-options <string>`: extra arguments to pass to the container create command
+- `-C|--custom-env <string>`: semi-colon delimited environment variables to start the service with
+- `-i|--image <string>`: the image name to start the service with
+- `-I|--image-version <string>`: the image version to start the service with
+- `-N|--initial-network <string>`: the initial network to attach the service to
+- `-m|--memory <int>`: container memory limit in megabytes (default: unlimited)
+- `-p|--password <string>`: override the user-level service password
+- `-P|--post-create-network <strings>`: a comma-separated list of networks to attach the service container to after service creation
+- `-S|--post-start-network <strings>`: a comma-separated list of networks to attach the service container to after service start
+- `-r|--root-password <string>`: override the root-level service password
+- `-s|--shm-size <string>`: override shared memory size for the service docker container
 
 Create a couchdb service named lollipop:
 
@@ -91,7 +90,7 @@ You can also specify the image and image version to use for the service. It *mus
 
 ```shell
 export COUCHDB_IMAGE="couchdb"
-export COUCHDB_IMAGE_VERSION="${PLUGIN_IMAGE_VERSION}"
+export COUCHDB_IMAGE_VERSION="3.5.2.1"
 dokku couchdb:create lollipop
 ```
 
@@ -102,11 +101,28 @@ export COUCHDB_CUSTOM_ENV="USER=alpha;HOST=beta"
 dokku couchdb:create lollipop
 ```
 
+### delete the CouchDB service/data/container if there are no links left
+
+```shell
+# usage
+dokku couchdb:destroy <service> [-f|--force]
+```
+
+flags:
+
+- `-f|--force`: force the destruction of the service
+
+Destroy the service, it's data, and the running container:
+
+```shell
+dokku couchdb:destroy lollipop
+```
+
 ### print the service information
 
 ```shell
 # usage
-dokku couchdb:info <service> [--single-info-flag]
+dokku couchdb:info <service> [--info-flags...]
 ```
 
 flags:
@@ -116,8 +132,8 @@ flags:
 - `--dsn`: show the service DSN
 - `--exposed-ports`: show service exposed ports
 - `--id`: show the service container id
-- `--internal-ip`: show the service internal ip
 - `--initial-network`: show the initial network being connected to
+- `--internal-ip`: show the service internal ip
 - `--links`: show the service app links
 - `--post-create-network`: show the networks to attach to after service container creation
 - `--post-start-network`: show the networks to attach to after service container start
@@ -149,7 +165,7 @@ dokku couchdb:info lollipop --status
 dokku couchdb:info lollipop --version
 ```
 
-### list all couchdb services
+### list all CouchDB services
 
 ```shell
 # usage
@@ -166,12 +182,12 @@ dokku couchdb:list
 
 ```shell
 # usage
-dokku couchdb:logs <service> [-t|--tail] <tail-num-optional>
+dokku couchdb:logs <service> [-t|--tail [<tail-num>]]
 ```
 
 flags:
 
-- `-t|--tail [<tail-num>]`: do not stop when end of the logs are reached and wait for additional output
+- `-t|--tail <int>`: tail the logs, optionally showing this many lines
 
 You can tail logs for a particular service:
 
@@ -185,24 +201,24 @@ By default, logs will not be tailed, but you can do this with the --tail flag:
 dokku couchdb:logs lollipop --tail
 ```
 
-The default tail setting is to show all logs, but an initial count can also be specified:
+By default the last 100 lines are shown, but a different count can be specified:
 
 ```shell
-dokku couchdb:logs lollipop --tail 5
+dokku couchdb:logs lollipop --tail=5
 ```
 
-### link the couchdb service to the app
+### link the CouchDB service to the app
 
 ```shell
 # usage
-dokku couchdb:link <service> <app> [--link-flags...]
+dokku couchdb:link <service> [<app>] [--link-flags...]
 ```
 
 flags:
 
-- `-a|--alias "BLUE_DATABASE"`: an alternative alias to use for linking to an app via environment variable
-- `-q|--querystring "pool=5"`: ampersand delimited querystring arguments to append to the service link
-- `-n|--no-restart "false"`: whether or not to restart the app on link (default: true)
+- `-a|--alias <string>`: an alternative alias to use for the config url exported to the app
+- `-n|--no-restart`: whether to skip restarting the app
+- `-q|--querystring <string>`: ampersand delimited querystring arguments to append to the service url
 
 A couchdb service can be linked to a container. This will use native docker links via the docker-options plugin. Here we link it to our `playground` app.
 
@@ -226,7 +242,7 @@ DOKKU_COUCHDB_LOLLIPOP_PORT_5984_TCP_ADDR=172.17.0.1
 The following will be set on the linked application by default:
 
 ```
-COUCHDB_URL=http://lollipop:SOME_PASSWORD@dokku-couchdb-lollipop:5984/lollipop
+COUCHDB_URL=http://:SOME_PASSWORD@dokku-couchdb-lollipop:5984
 ```
 
 The host exposed here only works internally in docker containers. If you want your container to be reachable from outside, you should use the `expose` subcommand. Another service can be linked to your app:
@@ -245,19 +261,19 @@ dokku couchdb:link lollipop playground
 This will cause `COUCHDB_URL` to be set as:
 
 ```
-http2://lollipop:SOME_PASSWORD@dokku-couchdb-lollipop:5984/lollipop
+http2://:SOME_PASSWORD@dokku-couchdb-lollipop:5984
 ```
 
-### unlink the couchdb service from the app
+### unlink the CouchDB service from the app
 
 ```shell
 # usage
-dokku couchdb:unlink <service> <app>
+dokku couchdb:unlink <service> [<app>] [-n|--no-restart]
 ```
 
 flags:
 
-- `-n|--no-restart "false"`: whether or not to restart the app on unlink (default: true)
+- `-n|--no-restart`: whether to skip restarting the app
 
 You can unlink a couchdb service:
 
@@ -292,26 +308,17 @@ Unset the post-create-network value:
 dokku couchdb:set lollipop post-create-network
 ```
 
+Set the keyserver a public key for backup encryption is fetched from:
+
+```shell
+dokku couchdb:set lollipop backup-keyserver hkp://keys.example.com
+```
+
 ### Service Lifecycle
 
 The lifecycle of each service can be managed through the following commands:
 
-### connect to the service via the couchdb connection tool
-
-```shell
-# usage
-dokku couchdb:connect <service>
-```
-
-Connect to the service via the couchdb connection tool:
-
-> NOTE: disconnecting from ssh while running this command may leave zombie processes due to moby/moby#9098
-
-```shell
-dokku couchdb:connect lollipop
-```
-
-### enter or run a command in a running couchdb service container
+### enter or run a command in a running CouchDB service container
 
 ```shell
 # usage
@@ -332,7 +339,7 @@ You may also run a command directly against the service. Filesystem changes will
 dokku couchdb:enter lollipop touch /tmp/test
 ```
 
-### expose a couchdb service on custom host:port if provided (random port on the 0.0.0.0 interface if otherwise unspecified)
+### expose a CouchDB service on custom host:port if provided (random port on the 0.0.0.0 interface if otherwise unspecified)
 
 ```shell
 # usage
@@ -351,7 +358,7 @@ Expose the service on the service's normal ports, with the first on a specified 
 dokku couchdb:expose lollipop 127.0.0.1:5984
 ```
 
-### unexpose a previously exposed couchdb service
+### unexpose a previously exposed CouchDB service
 
 ```shell
 # usage
@@ -368,13 +375,13 @@ dokku couchdb:unexpose lollipop
 
 ```shell
 # usage
-dokku couchdb:promote <service> <app>
+dokku couchdb:promote <service> [<app>]
 ```
 
 If you have a couchdb service linked to an app and try to link another couchdb service another link environment variable will be generated automatically:
 
 ```
-DOKKU_COUCHDB_BLUE_URL=http://other_service:ANOTHER_PASSWORD@dokku-couchdb-other-service:5984/other_service
+DOKKU_COUCHDB_BLUE_URL=http://:ANOTHER_PASSWORD@dokku-couchdb-other-service:5984/other_service
 ```
 
 You can promote the new service to be the primary one:
@@ -388,12 +395,12 @@ dokku couchdb:promote other_service playground
 This will replace `COUCHDB_URL` with the url from other_service and generate another environment variable to hold the previous value if necessary. You could end up with the following for example:
 
 ```
-COUCHDB_URL=http://other_service:ANOTHER_PASSWORD@dokku-couchdb-other-service:5984/other_service
-DOKKU_COUCHDB_BLUE_URL=http://other_service:ANOTHER_PASSWORD@dokku-couchdb-other-service:5984/other_service
-DOKKU_COUCHDB_SILVER_URL=http://lollipop:SOME_PASSWORD@dokku-couchdb-lollipop:5984/lollipop
+COUCHDB_URL=http://:ANOTHER_PASSWORD@dokku-couchdb-other-service:5984/other_service
+DOKKU_COUCHDB_BLUE_URL=http://:ANOTHER_PASSWORD@dokku-couchdb-other-service:5984/other_service
+DOKKU_COUCHDB_SILVER_URL=http://:SOME_PASSWORD@dokku-couchdb-lollipop:5984/lollipop
 ```
 
-### start a previously stopped couchdb service
+### start a previously stopped CouchDB service
 
 ```shell
 # usage
@@ -406,7 +413,7 @@ Start the service:
 dokku couchdb:start lollipop
 ```
 
-### stop a running couchdb service
+### stop a running CouchDB service
 
 ```shell
 # usage
@@ -419,7 +426,7 @@ Stop the service and removes the running container:
 dokku couchdb:stop lollipop
 ```
 
-### pause a running couchdb service
+### pause a running CouchDB service
 
 ```shell
 # usage
@@ -432,7 +439,7 @@ Pause the running container for the service:
 dokku couchdb:pause lollipop
 ```
 
-### graceful shutdown and restart of the couchdb service container
+### graceful shutdown and restart of the CouchDB service container
 
 ```shell
 # usage
@@ -454,15 +461,15 @@ dokku couchdb:upgrade <service> [--upgrade-flags...]
 
 flags:
 
-- `-c|--config-options "--args --go=here"`: extra arguments to pass to the container create command (default: `None`)
-- `-C|--custom-env "USER=alpha;HOST=beta"`: semi-colon delimited environment variables to start the service with
-- `-i|--image IMAGE`: the image name to start the service with
-- `-I|--image-version IMAGE_VERSION`: the image version to start the service with
-- `-N|--initial-network INITIAL_NETWORK`: the initial network to attach the service to
-- `-P|--post-create-network NETWORKS`: a comma-separated list of networks to attach the service container to after service creation
-- `-R|--restart-apps "true"`: whether or not to force an app restart (default: false)
-- `-S|--post-start-network NETWORKS`: a comma-separated list of networks to attach the service container to after service start
-- `-s|--shm-size SHM_SIZE`: override shared memory size for couchdb docker container
+- `-c|--config-options <string>`: extra arguments to pass to the container create command
+- `-C|--custom-env <string>`: semi-colon delimited environment variables to start the service with
+- `-i|--image <string>`: the image to upgrade the service to
+- `-I|--image-version <string>`: the image version to upgrade the service to
+- `-N|--initial-network <string>`: the initial network to attach the service to
+- `-P|--post-create-network <strings>`: a comma-separated list of networks to attach the service container to after service creation
+- `-S|--post-start-network <strings>`: a comma-separated list of networks to attach the service container to after service start
+- `-R|--restart-apps`: whether to stop and start the linked apps around the upgrade
+- `-s|--shm-size <string>`: override shared memory size for the service docker container
 
 You can upgrade an existing service to a new image or image-version:
 
@@ -474,11 +481,11 @@ dokku couchdb:upgrade lollipop
 
 Service scripting can be executed using the following commands:
 
-### list all couchdb service links for a given app
+### list all CouchDB service links for a given app
 
 ```shell
 # usage
-dokku couchdb:app-links <app>
+dokku couchdb:app-links [<app>]
 ```
 
 List all couchdb services that are linked to the `playground` app.
@@ -496,17 +503,15 @@ dokku couchdb:clone <service> <new-service> [--clone-flags...]
 
 flags:
 
-- `-c|--config-options "--args --go=here"`: extra arguments to pass to the container create command (default: `None`)
-- `-C|--custom-env "USER=alpha;HOST=beta"`: semi-colon delimited environment variables to start the service with
-- `-i|--image IMAGE`: the image name to start the service with
-- `-I|--image-version IMAGE_VERSION`: the image version to start the service with
-- `-m|--memory MEMORY`: container memory limit in megabytes (default: unlimited)
-- `-N|--initial-network INITIAL_NETWORK`: the initial network to attach the service to
-- `-p|--password PASSWORD`: override the user-level service password
-- `-P|--post-create-network NETWORKS`: a comma-separated list of networks to attach the service container to after service creation
-- `-r|--root-password PASSWORD`: override the root-level service password
-- `-S|--post-start-network NETWORKS`: a comma-separated list of networks to attach the service container to after service start
-- `-s|--shm-size SHM_SIZE`: override shared memory size for couchdb docker container
+- `-c|--config-options <string>`: extra arguments to pass to the container create command
+- `-C|--custom-env <string>`: semi-colon delimited environment variables to start the service with
+- `-N|--initial-network <string>`: the initial network to attach the service to
+- `-m|--memory <int>`: container memory limit in megabytes (default: unlimited)
+- `-p|--password <string>`: override the user-level service password
+- `-P|--post-create-network <strings>`: a comma-separated list of networks to attach the service container to after service creation
+- `-S|--post-start-network <strings>`: a comma-separated list of networks to attach the service container to after service start
+- `-r|--root-password <string>`: override the root-level service password
+- `-s|--shm-size <string>`: override shared memory size for the service docker container
 
 You can clone an existing service to a new one:
 
@@ -514,7 +519,7 @@ You can clone an existing service to a new one:
 dokku couchdb:clone lollipop lollipop-2
 ```
 
-### check if the couchdb service exists
+### check if the CouchDB service exists
 
 ```shell
 # usage
@@ -527,11 +532,11 @@ Here we check if the lollipop couchdb service exists.
 dokku couchdb:exists lollipop
 ```
 
-### check if the couchdb service is linked to an app
+### check if the CouchDB service is linked to an app
 
 ```shell
 # usage
-dokku couchdb:linked <service> <app>
+dokku couchdb:linked <service> [<app>]
 ```
 
 Here we check if the lollipop couchdb service is linked to the `playground` app.
@@ -540,7 +545,7 @@ Here we check if the lollipop couchdb service is linked to the `playground` app.
 dokku couchdb:linked lollipop playground
 ```
 
-### list all apps linked to the couchdb service
+### list all apps linked to the CouchDB service
 
 ```shell
 # usage
@@ -557,7 +562,7 @@ dokku couchdb:links lollipop
 
 The underlying service data can be imported and exported with the following commands:
 
-### import a dump into the couchdb service database
+### import a dump into the CouchDB service database
 
 ```shell
 # usage
@@ -570,7 +575,7 @@ Import a datastore dump:
 dokku couchdb:import lollipop < data.dump
 ```
 
-### export a dump of the couchdb service database
+### export a dump of the CouchDB service database
 
 ```shell
 # usage
@@ -601,7 +606,7 @@ The underlying core backup script is present [here](https://github.com/dokku/doc
 
 Backups can be performed using the backup commands:
 
-### set up authentication for backups on the couchdb service
+### set up authentication for backups on the CouchDB service
 
 ```shell
 # usage
@@ -632,7 +637,7 @@ More specific example for minio auth:
 dokku couchdb:backup-auth lollipop MINIO_ACCESS_KEY_ID MINIO_SECRET_ACCESS_KEY us-east-1 s3v4 https://YOURMINIOSERVICE
 ```
 
-### remove backup authentication for the couchdb service
+### remove backup authentication for the CouchDB service
 
 ```shell
 # usage
@@ -645,18 +650,18 @@ Remove s3 authentication:
 dokku couchdb:backup-deauth lollipop
 ```
 
-### create a backup of the couchdb service to an existing s3 bucket
+### create a backup of the CouchDB service to an existing s3 bucket
 
 ```shell
 # usage
-dokku couchdb:backup <service> <bucket-name> [--use-iam]
+dokku couchdb:backup <service> <bucket-name> [-u|--use-iam]
 ```
 
 flags:
 
 - `-u|--use-iam`: use the IAM profile associated with the current server
 
-Backup the `lollipop` service to the `my-s3-bucket` bucket on `AWS`:`
+Backup the `lollipop` service to the `my-s3-bucket` bucket on `AWS`:
 
 ```shell
 dokku couchdb:backup lollipop my-s3-bucket --use-iam
@@ -668,7 +673,7 @@ Restore a backup file (assuming it was extracted via `tar -xf backup.tgz`):
 dokku couchdb:import lollipop < backup-folder/export
 ```
 
-### set encryption for all future backups of couchdb service
+### set encryption for all future backups of CouchDB service
 
 ```shell
 # usage
@@ -683,7 +688,7 @@ dokku couchdb:backup-set-encryption lollipop
 
 Public key encryption will take precendence over the passphrase encryption if both types are set.
 
-### set GPG Public Key encryption for all future backups of couchdb service
+### set GPG Public Key encryption for all future backups of CouchDB service
 
 ```shell
 # usage
@@ -696,9 +701,13 @@ Set the `GPG` Public Key for encrypting backups:
 dokku couchdb:backup-set-public-key-encryption lollipop
 ```
 
-This method currently requires the <public-key-id> to be present on the keyserver `keyserver.ubuntu.com`:
+The <public-key-id> is fetched from `keyserver.ubuntu.com`, unless the service names another one with the backup-keyserver property:
 
-### unset encryption for future backups of the couchdb service
+```shell
+dokku couchdb:set lollipop backup-keyserver hkp://keys.example.com
+```
+
+### unset encryption for future backups of the CouchDB service
 
 ```shell
 # usage
@@ -711,7 +720,7 @@ Unset the `GPG` encryption passphrase for backups:
 dokku couchdb:backup-unset-encryption lollipop
 ```
 
-### unset GPG Public Key encryption for future backups of the couchdb service
+### unset GPG Public Key encryption for future backups of the CouchDB service
 
 ```shell
 # usage
@@ -724,11 +733,11 @@ Unset the `GPG` Public Key encryption for backups:
 dokku couchdb:backup-unset-public-key-encryption lollipop
 ```
 
-### schedule a backup of the couchdb service
+### schedule a backup of the CouchDB service
 
 ```shell
 # usage
-dokku couchdb:backup-schedule <service> <schedule> <bucket-name> [--use-iam]
+dokku couchdb:backup-schedule <service> <schedule> <bucket-name> [-u|--use-iam]
 ```
 
 flags:
@@ -762,7 +771,7 @@ Cat the contents of the configured backup cronfile for the service:
 dokku couchdb:backup-schedule-cat lollipop
 ```
 
-### unschedule the backup of the couchdb service
+### unschedule the backup of the CouchDB service
 
 ```shell
 # usage
