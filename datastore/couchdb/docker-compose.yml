@@ -46,7 +46,7 @@ x-dokku:
       # beside the service rather than inside it, for the same reason the dumps
       # are: the couchdb image ships nothing that can read json
       mode: sidecar
-      image: dokku/s3backup:0.18.0
+      image: dokku/s3backup:0.19.1
       exec: ["dokku-couchdb-create-database"]
       env:
         COUCHDB_DATABASE: "{{ .Database }}"
@@ -65,7 +65,7 @@ x-dokku:
     # every export and import.
     export:
       mode: sidecar
-      image: dokku/s3backup:0.18.0
+      image: dokku/s3backup:0.19.1
       exec: ["dokku-couchdb-export"]
       env:
         COUCHDB_DATABASE: "{{ .Database }}"
@@ -74,7 +74,7 @@ x-dokku:
 
     import:
       mode: sidecar
-      image: dokku/s3backup:0.18.0
+      image: dokku/s3backup:0.19.1
       stdin: true
       exec: ["dokku-couchdb-import"]
       env:

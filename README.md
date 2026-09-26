@@ -22,7 +22,7 @@ couchdb:backup <service> <bucket-name> [-u|--use-iam] # create a backup of the C
 couchdb:backup-auth <service> <aws-access-key-id> <aws-secret-access-key> <aws-default-region> <aws-signature-version> <endpoint-url> # set up authentication for backups on the CouchDB service
 couchdb:backup-deauth <service>                    # remove backup authentication for the CouchDB service
 couchdb:backup-schedule <service> <schedule> <bucket-name> [-u|--use-iam] # schedule a backup of the CouchDB service
-couchdb:backup-schedule-cat <service>              # cat the contents of the configured backup cronfile for the service
+couchdb:backup-schedule-cat <service>              # cat the crontab line of the scheduled backup for the service
 couchdb:backup-set-encryption <service> <passphrase> # set encryption for all future backups of CouchDB service
 couchdb:backup-set-public-key-encryption <service> <public-key-id> # set GPG Public Key encryption for all future backups of CouchDB service
 couchdb:backup-unschedule <service>                # unschedule the backup of the CouchDB service
@@ -35,7 +35,7 @@ couchdb:enter <service>                            # enter or run a command in a
 couchdb:exists <service>                           # check if the CouchDB service exists
 couchdb:export <service>                           # export a dump of the CouchDB service database
 couchdb:expose <service> <ports...>                # expose a CouchDB service on custom host:port if provided (random port on the 0.0.0.0 interface if otherwise unspecified)
-couchdb:import <service>                           # import a dump into the CouchDB service database
+couchdb:import <service> [-f|--file <path>]        # import a dump into the CouchDB service database
 couchdb:info [<service>] [--info-flags...]         # print the service information
 couchdb:link <service> [<app>] [--link-flags...]   # link the CouchDB service to the app
 couchdb:linked <service> [<app>]                   # check if the CouchDB service is linked to an app
@@ -494,7 +494,7 @@ The lifecycle of each service can be managed through the following commands:
 dokku couchdb:enter <service>
 ```
 
-A bash prompt can be opened against a running service. Filesystem changes will not be saved to disk.
+A shell can be opened against a running service. Filesystem changes will not be saved to disk.
 
 > NOTE: disconnecting from ssh while running this command may leave zombie processes due to moby/moby#9098
 
@@ -767,13 +767,23 @@ The underlying service data can be imported and exported with the following comm
 
 ```shell
 # usage
-dokku couchdb:import <service>
+dokku couchdb:import <service> [-f|--file <path>]
 ```
+
+flags:
+
+- `-f|--file <string>`: a file on the dokku host to import instead of reading stdin
 
 Import a datastore dump:
 
 ```shell
 dokku couchdb:import lollipop < data.dump
+```
+
+A dump that is already on the dokku host can be imported with --file. The path is on the dokku host, not on the machine running ssh.
+
+```shell
+dokku couchdb:import lollipop --file /var/lib/dokku/data/storage/data.dump
 ```
 
 ### export a dump of the CouchDB service database
@@ -804,6 +814,8 @@ You may skip the `backup-auth` step if your dokku install is running within EC2 
 If both passphrase and public key forms of encryption are set, the public key encryption will take precedence.
 
 The underlying core backup script is present [here](https://github.com/dokku/docker-s3backup/blob/main/backup.sh).
+
+Scheduled backups are added to the dokku crontab, and are listed by `dokku cron:list --global`.
 
 Backups can be performed using the backup commands:
 
@@ -947,7 +959,9 @@ flags:
 
 Schedule a backup:
 
-> 'schedule' is a crontab expression, eg. "0 3 * * *" for each day at 3am
+> 'schedule' is a crontab expression, eg. "0 3 * * *" for each day at 3am, or a descriptor such as "@daily". A schedule cron cannot run is refused.
+> the backup is added to the dokku crontab through the cron-entries plugin trigger, so it is listed by "dokku cron:list --global" and its output is appended to /var/log/dokku/couchdb.log
+> NOTE: dokku only writes a crontab when the global scheduler or at least one app uses the docker-local scheduler, so a scheduled backup does not run on a host that only uses k3s or null
 
 ```shell
 dokku couchdb:backup-schedule lollipop "0 3 * * *" my-s3-bucket
@@ -959,14 +973,14 @@ Schedule a backup and authenticate via iam:
 dokku couchdb:backup-schedule lollipop "0 3 * * *" my-s3-bucket --use-iam
 ```
 
-### cat the contents of the configured backup cronfile for the service
+### cat the crontab line of the scheduled backup for the service
 
 ```shell
 # usage
 dokku couchdb:backup-schedule-cat <service>
 ```
 
-Cat the contents of the configured backup cronfile for the service:
+Cat the crontab line of the scheduled backup for the service:
 
 ```shell
 dokku couchdb:backup-schedule-cat lollipop
@@ -979,7 +993,7 @@ dokku couchdb:backup-schedule-cat lollipop
 dokku couchdb:backup-unschedule <service>
 ```
 
-Remove the scheduled backup from cron:
+Remove the scheduled backup from the dokku crontab:
 
 ```shell
 dokku couchdb:backup-unschedule lollipop
