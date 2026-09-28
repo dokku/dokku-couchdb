@@ -81,3 +81,7 @@ x-dokku:
         COUCHDB_DATABASE: "{{ .Database }}"
         COUCHDB_USER: "{{ .ServiceName }}"
         COUCHDB_PASSWORD: "{{ .Secret.password }}"
+
+  # the databases the server keeps for itself. A service named after one would
+  # hand its app the server's own database rather than one of its own
+  reserved_names: [_global_changes, _replicator, _users]
