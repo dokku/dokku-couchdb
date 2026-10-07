@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 """Writes a dump of a couchdb database to stdout.
 
+With COUCHDB_ALL_DATABASES set, every database the server holds is dumped
+instead, keyed by name, leaving out the ones it keeps for itself.
+
 The couchdb image ships no tool that can read json: no jq, no python, not even
 perl's own json module. The bash plugin worked around that by downloading a
 third party script into the running container on every export, from a branch
@@ -12,11 +15,13 @@ import json
 import os
 import sys
 import urllib.error
+import urllib.parse
 import urllib.request
 
 HOST = os.environ.get("COUCHDB_HOST", "127.0.0.1")
 PORT = os.environ.get("COUCHDB_PORT", "5984")
 DATABASE = os.environ["COUCHDB_DATABASE"]
+ALL_DATABASES = os.environ.get("COUCHDB_ALL_DATABASES", "") == "true"
 USER = os.environ["COUCHDB_USER"]
 PASSWORD = os.environ["COUCHDB_PASSWORD"]
 
@@ -30,22 +35,42 @@ def request(path):
         return json.load(response)
 
 
-def main():
-    try:
-        listing = request("{}/_all_docs?include_docs=true".format(DATABASE))
-    except urllib.error.HTTPError as error:
-        sys.stderr.write("unable to read {}: {}\n".format(DATABASE, error))
-        return 1
+def documents(database):
+    listing = request("{}/_all_docs?include_docs=true".format(urllib.parse.quote(database, safe="")))
 
     # the design documents belong to the database rather than to the data, and
     # restoring them into a database that already has them conflicts
-    documents = [
+    return [
         row["doc"]
         for row in listing.get("rows", [])
         if row.get("doc") and not row["id"].startswith("_design/")
     ]
 
-    json.dump({"docs": documents}, sys.stdout)
+
+def main():
+    # a name starting with an underscore is one the server keeps for itself:
+    # its users, its replication jobs and its change feed
+    if ALL_DATABASES:
+        try:
+            names = [name for name in request("_all_dbs") if not name.startswith("_")]
+        except urllib.error.HTTPError as error:
+            sys.stderr.write("unable to list the databases: {}\n".format(error))
+            return 1
+    else:
+        names = [DATABASE]
+
+    dump = {}
+    for name in names:
+        try:
+            dump[name] = {"docs": documents(name)}
+        except urllib.error.HTTPError as error:
+            sys.stderr.write("unable to read {}: {}\n".format(name, error))
+            return 1
+
+    if ALL_DATABASES:
+        json.dump({"databases": dump}, sys.stdout)
+    else:
+        json.dump(dump[DATABASE], sys.stdout)
     sys.stdout.write("\n")
     return 0
 

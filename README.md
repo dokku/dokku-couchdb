@@ -21,6 +21,7 @@ couchdb:app-links [<app>]                          # list all CouchDB service li
 couchdb:backup <service> <bucket-name> [-u|--use-iam] # create a backup of the CouchDB service to an existing s3 bucket
 couchdb:backup-auth <service> <aws-access-key-id> <aws-secret-access-key> <aws-default-region> <aws-signature-version> <endpoint-url> # set up authentication for backups on the CouchDB service
 couchdb:backup-deauth <service>                    # remove backup authentication for the CouchDB service
+couchdb:backup-logs <service> [-t|--tail [<tail-num>]] # print the most recent output of the scheduled backups of the service
 couchdb:backup-schedule <service> <schedule> <bucket-name> [-u|--use-iam] # schedule a backup of the CouchDB service
 couchdb:backup-schedule-cat <service>              # cat the crontab line of the scheduled backup for the service
 couchdb:backup-set-encryption <service> <passphrase> # set encryption for all future backups of CouchDB service
@@ -33,9 +34,9 @@ couchdb:create <service> [--create-flags...]       # create a CouchDB service
 couchdb:destroy <service> [-f|--force]             # delete the CouchDB service/data/container if there are no links left
 couchdb:enter <service>                            # enter or run a command in a running CouchDB service container
 couchdb:exists <service>                           # check if the CouchDB service exists
-couchdb:export <service> [-f|--file <path>] [--force] # export a dump of the CouchDB service database
+couchdb:export <service> [-f|--file <path>] [--force] [--all-databases] # export a dump of the CouchDB service database
 couchdb:expose <service> <ports...>                # expose a CouchDB service on custom host:port if provided (random port on the 0.0.0.0 interface if otherwise unspecified)
-couchdb:import <service> [-f|--file <path>]        # import a dump into the CouchDB service database
+couchdb:import <service> [-f|--file <path>] [--all-databases] # import a dump into the CouchDB service database
 couchdb:info [<service>] [--info-flags...]         # print the service information
 couchdb:link <service> [<app>] [--link-flags...]   # link the CouchDB service to the app
 couchdb:linked <service> [<app>]                   # check if the CouchDB service is linked to an app
@@ -46,6 +47,7 @@ couchdb:mount [--replace] <service> <source:container-dir[:options]>... # mount 
 couchdb:pause <service>                            # pause a running CouchDB service
 couchdb:promote <service> [<app>]                  # promote service <service> as COUCHDB_URL in <app>
 couchdb:reexpose <service>                         # reexpose a CouchDB service, applying its expose settings
+couchdb:reset <service> [-f|--force]               # delete all data in the CouchDB service, keeping the service and its links
 couchdb:restart <service>                          # graceful shutdown and restart of the CouchDB service container
 couchdb:set <service> <key> <value>                # set or clear a property for a service
 couchdb:start <service>                            # start a previously stopped CouchDB service
@@ -191,10 +193,13 @@ flags:
 - `--backup-encryption-fingerprint`: show a sha256 fingerprint of the stored backup passphrase
 - `--backup-endpoint-url`: show the s3-compatible endpoint backups are shipped to
 - `--backup-keyserver`: show the keyserver backup public keys are fetched from
+- `--backup-mailto`: show who cron mails the output of scheduled backups to in place of the global MAILTO
+- `--backup-object-name`: show the name backups are uploaded under in place of the default
 - `--backup-public-key-id`: show the gpg public key id backups are encrypted with
 - `--backup-schedule`: show the cron schedule backups run on
 - `--backup-signature-version`: show the signature version backups authenticate with
 - `--backup-storage-class`: show the s3 storage class backups are uploaded with
+- `--backup-timestamp`: show whether backups are uploaded under a key ending in the time they started
 - `--backup-use-iam`: show whether scheduled backups authenticate with an instance role
 - `--config-dir`: show the service configuration directory
 - `--config-options`: show the config options the service container is run with
@@ -485,6 +490,36 @@ Go back to uploading backups with the bucket's default storage class:
 
 ```shell
 dokku couchdb:set lollipop backup-storage-class
+```
+
+Upload backups under a name of your own rather than couchdb-lollipop:
+
+```shell
+dokku couchdb:set lollipop backup-object-name db/latest
+```
+
+Upload every backup to the same key, without a timestamp, so bucket versioning and lifecycle rules can keep and rotate them:
+
+```shell
+dokku couchdb:set lollipop backup-timestamp false
+```
+
+Go back to timestamped backups:
+
+```shell
+dokku couchdb:set lollipop backup-timestamp
+```
+
+Mail the output of scheduled backups to a comma-separated list of email addresses or local users rather than to the global cron `MAILTO`. Requires a dokku version that reads json entries from the cron-entries plugin trigger, and a mail transfer agent on the host:
+
+```shell
+dokku couchdb:set lollipop backup-mailto ops@example.com,dba@example.com
+```
+
+Go back to mailing scheduled backup output to the global cron `MAILTO`:
+
+```shell
+dokku couchdb:set lollipop backup-mailto
 ```
 
 Cap the container log at a size of your own rather than the one it inherits:
@@ -897,7 +932,7 @@ flags:
 - `-P|--post-create-network <strings>`: a comma-separated list of networks to attach the service container to after service creation
 - `-S|--post-start-network <strings>`: a comma-separated list of networks to attach the service container to after service start
 - `--restart <string>`: the docker restart policy to run the service container with (default: always)
-- `-R|--restart-apps`: whether to stop and start the linked apps around the upgrade
+- `-R|--restart-apps`: whether to stop and start the linked apps around the upgrade, required for one that migrates the data
 - `-s|--shm-size <string>`: override shared memory size for the service docker container
 - `--volume <stringArray>`: a host path or docker volume to mount into the service container, as <source>:<container-dir>[:<options>], repeatable
 - `--volume-target <stringArray>`: mount one of the definition's volumes at another container path, as <volume>=<container-dir>, repeatable
@@ -981,13 +1016,13 @@ You can clone an existing service to a new one:
 dokku couchdb:clone lollipop lollipop-2
 ```
 
-The new service starts from the settings of the one it copies: its config options, custom env, memory, shm size, networks, log driver, log options, restart policy, mounts, volume targets, backup keyserver and backup storage class. A flag passed to clone overrides that one setting, and a flag passed empty clears it:
+The new service starts from the settings of the one it copies: its config options, custom env, memory, shm size, networks, log driver, log options, restart policy, mounts, volume targets, backup keyserver, backup storage class and backup timestamp. A flag passed to clone overrides that one setting, and a flag passed empty clears it:
 
 ```shell
 dokku couchdb:clone lollipop lollipop-2 --restart no --custom-env ""
 ```
 
-The password, exposed ports, links and backup credentials, schedule and encryption are not copied. The clone's passwords are generated unless they are given.
+The password, exposed ports, links and backup credentials, schedule, encryption and object name are not copied. The clone's passwords are generated unless they are given.
 
 ```shell
 dokku couchdb:clone lollipop lollipop-2 --password <password>
@@ -1042,11 +1077,12 @@ The underlying service data can be imported and exported with the following comm
 
 ```shell
 # usage
-dokku couchdb:import <service> [-f|--file <path>]
+dokku couchdb:import <service> [-f|--file <path>] [--all-databases]
 ```
 
 flags:
 
+- `--all-databases`: load a dump of every database in the service, as written by export --all-databases or a backup
 - `-f|--file <string>`: a file on the dokku host to import instead of reading stdin
 
 Import a datastore dump:
@@ -1061,15 +1097,22 @@ A dump that is already on the dokku host can be imported with --file. The path i
 dokku couchdb:import lollipop --file /var/lib/dokku/data/storage/data.dump
 ```
 
+A dump of every database, as written by export --all-databases or a backup, is imported with --all-databases. Each database in the dump is replaced under the name it was exported from, and any other database is left alone.
+
+```shell
+dokku couchdb:import lollipop --all-databases < all.dump
+```
+
 ### export a dump of the CouchDB service database
 
 ```shell
 # usage
-dokku couchdb:export <service> [-f|--file <path>] [--force]
+dokku couchdb:export <service> [-f|--file <path>] [--force] [--all-databases]
 ```
 
 flags:
 
+- `--all-databases`: export every database in the service rather than only the one named for it
 - `-f|--file <string>`: a file on the dokku host to export to instead of writing stdout
 - `--force`: replace the file named with --file if it already exists
 
@@ -1097,9 +1140,40 @@ A file that already exists is not overwritten unless --force is given:
 dokku couchdb:export lollipop --file /var/lib/dokku/data/storage/data.dump --force
 ```
 
+Only the database named for the service is exported unless --all-databases is given, which exports every database in the service, leaving out the ones the server keeps for itself. It is imported again with import --all-databases, into the databases it was exported from.
+
+```shell
+dokku couchdb:export lollipop --all-databases > all.dump
+```
+
+### delete all data in the CouchDB service, keeping the service and its links
+
+```shell
+# usage
+dokku couchdb:reset <service> [-f|--force]
+```
+
+flags:
+
+- `-f|--force`: reset the service without asking for its name first
+
+Delete all data in the service, leaving it as empty as a newly created one. The service, its credentials, and the apps it is linked to are kept, so linked apps do not need to be relinked. Connections the apps hold open may be closed.
+
+```shell
+dokku couchdb:reset lollipop
+```
+
+The service name is asked for before anything is deleted, unless --force is given:
+
+```shell
+dokku couchdb:reset lollipop --force
+```
+
 ### Backups
 
-Datastore backups are supported via AWS S3 and S3 compatible services like [minio](https://github.com/minio/minio).
+Datastore backups are supported via AWS S3 and S3 compatible services like [minio](https://github.com/minio/minio) and [DigitalOcean Spaces](https://docs.digitalocean.com/products/spaces/).
+
+The endpoint of an S3 compatible service is passed as the `endpoint-url` argument of `backup-auth`, such as `https://nyc3.digitaloceanspaces.com`, and must not include the bucket. The bucket is passed to `backup` and `backup-schedule` by its name alone, such as `my-s3-bucket` rather than `s3://my-s3-bucket`, and must follow the [S3 bucket naming rules](https://docs.aws.amazon.com/AmazonS3/latest/userguide/bucketnamingrules.html).
 
 You may skip the `backup-auth` step if your dokku install is running within EC2 and has access to the bucket via an IAM profile. In that case, use the `--use-iam` option with the `backup` command.
 
@@ -1107,9 +1181,11 @@ If both passphrase and public key forms of encryption are set, the public key en
 
 Backups are uploaded with the bucket's default storage class unless the service sets the `backup-storage-class` property with the `set` command.
 
+Backups are uploaded to `<prefix>-<service>-<timestamp>.tgz`. The service may name the key with the `backup-object-name` property and drop the timestamp by setting the `backup-timestamp` property to `false`, so that every backup is uploaded to the same key and bucket versioning and lifecycle rules can keep and rotate them. The bucket name may end in a path to upload under, such as `my-s3-bucket/backups`.
+
 The underlying core backup script is present [here](https://github.com/dokku/docker-s3backup/blob/main/backup.sh).
 
-Scheduled backups are added to the dokku crontab, and are listed by `dokku cron:list --global`.
+Scheduled backups are added to the dokku crontab, and are listed by `dokku cron:list --global`. Each service's scheduled backups append their output to a log of its own, `/var/log/dokku/<prefix>.<service>.backup.log`, which the `backup-logs` command shows. The output of a service's scheduled backups can be mailed to specific recipients by setting the `backup-mailto` property with the `set` command, on dokku versions that support a per-entry `MAILTO`.
 
 Backups can be performed using the backup commands:
 
@@ -1146,6 +1222,12 @@ More specific example for minio auth:
 dokku couchdb:backup-auth lollipop MINIO_ACCESS_KEY_ID MINIO_SECRET_ACCESS_KEY us-east-1 s3v4 https://YOURMINIOSERVICE
 ```
 
+More specific example for digitalocean spaces auth, where the endpoint does not include the space name:
+
+```shell
+dokku couchdb:backup-auth lollipop SPACES_ACCESS_KEY SPACES_SECRET_KEY nyc3 s3v4 https://nyc3.digitaloceanspaces.com
+```
+
 ### remove backup authentication for the CouchDB service
 
 ```shell
@@ -1176,7 +1258,19 @@ Backup the `lollipop` service to the `my-s3-bucket` bucket on `AWS`:
 dokku couchdb:backup lollipop my-s3-bucket --use-iam
 ```
 
-Restore a backup file (assuming it was extracted via `tar -xf backup.tgz`):
+Backup the `lollipop` service under a path in the bucket:
+
+```shell
+dokku couchdb:backup lollipop my-s3-bucket/couchdb-backups
+```
+
+A backup holds every database in the service, so it is restored with --all-databases (assuming it was extracted via `tar -xf backup.tgz`):
+
+```shell
+dokku couchdb:import lollipop --all-databases < backup-folder/export
+```
+
+A backup made by an older version of the plugin holds only the database named for the service, and is restored without it:
 
 ```shell
 dokku couchdb:import lollipop < backup-folder/export
@@ -1256,7 +1350,7 @@ flags:
 Schedule a backup:
 
 > 'schedule' is a crontab expression, eg. "0 3 * * *" for each day at 3am, or a descriptor such as "@daily". A schedule cron cannot run is refused.
-> the backup is added to the dokku crontab through the cron-entries plugin trigger, so it is listed by "dokku cron:list --global" and its output is appended to /var/log/dokku/couchdb.log
+> the backup is added to the dokku crontab through the cron-entries plugin trigger, so it is listed by "dokku cron:list --global" and its output is appended to /var/log/dokku/couchdb.<service>.backup.log, which "dokku couchdb:backup-logs <service>" prints
 > NOTE: dokku only writes a crontab when the global scheduler or at least one app uses the docker-local scheduler, so a scheduled backup does not run on a host that only uses k3s or null
 
 ```shell
@@ -1293,6 +1387,37 @@ Remove the scheduled backup from the dokku crontab:
 
 ```shell
 dokku couchdb:backup-unschedule lollipop
+```
+
+### print the most recent output of the scheduled backups of the service
+
+```shell
+# usage
+dokku couchdb:backup-logs <service> [-t|--tail [<tail-num>]]
+```
+
+flags:
+
+- `-t|--tail <int>`: follow the log, optionally showing this many lines
+
+Print the most recent output of the scheduled backups of the service:
+
+> each service's scheduled backups append their output to /var/log/dokku/couchdb.<service>.backup.log, or to the same file under DOKKU_LOGS_DIR when dokku keeps its logs elsewhere. Every run starts and ends with a line marked with the time in utc.
+
+```shell
+dokku couchdb:backup-logs lollipop
+```
+
+By default, the log will not be tailed, but you can do this with the --tail flag:
+
+```shell
+dokku couchdb:backup-logs lollipop --tail
+```
+
+By default the last 100 lines are shown, but a different count can be specified:
+
+```shell
+dokku couchdb:backup-logs lollipop --tail=5
 ```
 
 ### Limiting where and to whom a service is exposed

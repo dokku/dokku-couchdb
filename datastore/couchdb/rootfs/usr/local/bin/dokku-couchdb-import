@@ -4,17 +4,23 @@
 An import replaces: the database is deleted and remade before the documents are
 written, so what is read back afterwards is what was in the dump and nothing
 that happened to be there before.
+
+With COUCHDB_ALL_DATABASES set, the dump is one of every database, keyed by
+name, and each database in it is replaced under that name. A database the dump
+does not name is left alone.
 """
 import base64
 import json
 import os
 import sys
 import urllib.error
+import urllib.parse
 import urllib.request
 
 HOST = os.environ.get("COUCHDB_HOST", "127.0.0.1")
 PORT = os.environ.get("COUCHDB_PORT", "5984")
 DATABASE = os.environ["COUCHDB_DATABASE"]
+ALL_DATABASES = os.environ.get("COUCHDB_ALL_DATABASES", "") == "true"
 USER = os.environ["COUCHDB_USER"]
 PASSWORD = os.environ["COUCHDB_PASSWORD"]
 
@@ -30,9 +36,8 @@ def request(path, method="GET", body=None):
         return json.load(response)
 
 
-def main():
-    dump = json.load(sys.stdin)
-    documents = dump.get("docs", [])
+def replace(database, documents):
+    path = urllib.parse.quote(database, safe="")
 
     # a revision belongs to the database the document came from, and offering
     # one to a database that has never seen the document is refused
@@ -40,22 +45,46 @@ def main():
         document.pop("_rev", None)
 
     try:
-        request(DATABASE, method="DELETE")
+        request(path, method="DELETE")
     except urllib.error.HTTPError as error:
         if error.code != 404:
-            sys.stderr.write("unable to remove {}: {}\n".format(DATABASE, error))
+            sys.stderr.write("unable to remove {}: {}\n".format(database, error))
             return 1
 
-    request(DATABASE, method="PUT")
+    request(path, method="PUT")
 
     if not documents:
         return 0
 
-    written = request("{}/_bulk_docs".format(DATABASE), method="POST", body={"docs": documents})
+    written = request("{}/_bulk_docs".format(path), method="POST", body={"docs": documents})
     for result in written:
         if result.get("error"):
-            sys.stderr.write("unable to write {}: {}\n".format(result.get("id"), result))
+            sys.stderr.write("unable to write {} into {}: {}\n".format(result.get("id"), database, result))
             return 1
+
+    return 0
+
+
+def main():
+    dump = json.load(sys.stdin)
+
+    if not ALL_DATABASES:
+        return replace(DATABASE, dump.get("docs", []))
+
+    # refused rather than read as a dump of nothing, which would replace
+    # nothing and report success
+    if "databases" not in dump:
+        sys.stderr.write("the dump is not one of every database; import it without --all-databases\n")
+        return 1
+
+    for name, database in sorted(dump["databases"].items()):
+        # the server's own databases are never written, whatever the dump holds
+        if name.startswith("_"):
+            continue
+
+        status = replace(name, database.get("docs", []))
+        if status != 0:
+            return status
 
     return 0
 
