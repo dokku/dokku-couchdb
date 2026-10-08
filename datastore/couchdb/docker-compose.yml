@@ -46,7 +46,7 @@ x-dokku:
       # beside the service rather than inside it, for the same reason the dumps
       # are: the couchdb image ships nothing that can read json
       mode: sidecar
-      image: dokku/s3backup:0.19.2
+      image: dokku/s3backup:0.20.0
       exec: ["dokku-couchdb-create-database"]
       env:
         COUCHDB_DATABASE: "{{ .Database }}"
@@ -65,18 +65,55 @@ x-dokku:
     # every export and import.
     export:
       mode: sidecar
-      image: dokku/s3backup:0.19.2
+      image: dokku/s3backup:0.20.0
       exec: ["dokku-couchdb-export"]
       env:
         COUCHDB_DATABASE: "{{ .Database }}"
         COUCHDB_USER: "{{ .ServiceName }}"
         COUCHDB_PASSWORD: "{{ .Secret.password }}"
 
+      # every database, keyed by name, leaving out the ones the server keeps
+      # for itself. The service's account is the server's admin, so it can
+      # read every one.
+      all_databases:
+        mode: sidecar
+        image: dokku/s3backup:0.20.0
+        exec: ["dokku-couchdb-export"]
+        env:
+          COUCHDB_ALL_DATABASES: "true"
+          COUCHDB_DATABASE: "{{ .Database }}"
+          COUCHDB_USER: "{{ .ServiceName }}"
+          COUCHDB_PASSWORD: "{{ .Secret.password }}"
+
     import:
       mode: sidecar
-      image: dokku/s3backup:0.19.2
+      image: dokku/s3backup:0.20.0
       stdin: true
       exec: ["dokku-couchdb-import"]
+      env:
+        COUCHDB_DATABASE: "{{ .Database }}"
+        COUCHDB_USER: "{{ .ServiceName }}"
+        COUCHDB_PASSWORD: "{{ .Secret.password }}"
+
+      # each database in the dump is replaced under the name it was exported
+      # from, and any the dump does not name is left alone
+      all_databases:
+        mode: sidecar
+        image: dokku/s3backup:0.20.0
+        stdin: true
+        exec: ["dokku-couchdb-import"]
+        env:
+          COUCHDB_ALL_DATABASES: "true"
+          COUCHDB_DATABASE: "{{ .Database }}"
+          COUCHDB_USER: "{{ .ServiceName }}"
+          COUCHDB_PASSWORD: "{{ .Secret.password }}"
+
+    # beside the service for the same reason the dumps are. Every database an
+    # app could have written to goes, and the service's own is made again
+    reset:
+      mode: sidecar
+      image: dokku/s3backup:0.20.0
+      exec: ["dokku-couchdb-reset"]
       env:
         COUCHDB_DATABASE: "{{ .Database }}"
         COUCHDB_USER: "{{ .ServiceName }}"
