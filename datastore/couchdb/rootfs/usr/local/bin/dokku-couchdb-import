@@ -8,6 +8,9 @@ that happened to be there before.
 With COUCHDB_ALL_DATABASES set, the dump is one of every database, keyed by
 name, and each database in it is replaced under that name. A database the dump
 does not name is left alone.
+
+A database is made again with the members it had, so the users made in the
+service keep their access to it.
 """
 import base64
 import json
@@ -44,6 +47,14 @@ def replace(database, documents):
     for document in documents:
         document.pop("_rev", None)
 
+    security = {}
+    try:
+        security = request(path + "/_security")
+    except urllib.error.HTTPError as error:
+        if error.code != 404:
+            sys.stderr.write("unable to read the members of {}: {}\n".format(database, error))
+            return 1
+
     try:
         request(path, method="DELETE")
     except urllib.error.HTTPError as error:
@@ -52,6 +63,9 @@ def replace(database, documents):
             return 1
 
     request(path, method="PUT")
+
+    if security:
+        request(path + "/_security", method="PUT", body=security)
 
     if not documents:
         return 0
