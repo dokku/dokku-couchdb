@@ -32,8 +32,65 @@ x-dokku:
   scheme: http
   alias: COUCHDB
 
-  dsn: "{{ .Scheme }}://{{ .ServiceName }}:{{ .Secret.password }}@{{ .Host }}:{{ .Port.native }}/{{ .Database }}"
+  dsn: "{{ .Scheme }}://{{ .Username }}:{{ .Password }}@{{ .Host }}:{{ .Port.native }}/{{ .Database }}"
   wait: native
+
+  # the databases and users a service holds beside its own, made beside the
+  # service for the reason the dumps are. A user is a member of every database
+  # the service holds rather than an admin, so it reaches nothing the server
+  # keeps for itself.
+  databases:
+    create:
+      mode: sidecar
+      image: dokku/s3backup:0.20.0
+      exec: ["dokku-couchdb-create-database"]
+      env:
+        COUCHDB_USER: "{{ .ServiceName }}"
+        COUCHDB_PASSWORD: "{{ .Secret.password }}"
+        COUCHDB_DATABASE: "{{ .Args.database }}"
+        COUCHDB_MEMBERS: "{{ .Args.users }}"
+    destroy:
+      mode: sidecar
+      image: dokku/s3backup:0.20.0
+      exec: ["dokku-couchdb-destroy-database"]
+      env:
+        COUCHDB_USER: "{{ .ServiceName }}"
+        COUCHDB_PASSWORD: "{{ .Secret.password }}"
+        COUCHDB_DATABASE: "{{ .Args.database }}"
+
+  users:
+    default: "{{ .ServiceName }}"
+    secret: password
+    reserved: [admin]
+    create:
+      mode: sidecar
+      image: dokku/s3backup:0.20.0
+      exec: ["dokku-couchdb-users", "create"]
+      env:
+        COUCHDB_USER: "{{ .ServiceName }}"
+        COUCHDB_PASSWORD: "{{ .Secret.password }}"
+        COUCHDB_USER_NAME: "{{ .Args.user }}"
+        COUCHDB_DATABASES: "{{ .Args.databases }}"
+        COUCHDB_NEW_PASSWORD: "{{ .NewSecret }}"
+    destroy:
+      mode: sidecar
+      image: dokku/s3backup:0.20.0
+      exec: ["dokku-couchdb-users", "destroy"]
+      env:
+        COUCHDB_USER: "{{ .ServiceName }}"
+        COUCHDB_PASSWORD: "{{ .Secret.password }}"
+        COUCHDB_USER_NAME: "{{ .Args.user }}"
+        COUCHDB_DATABASES: "{{ .Args.databases }}"
+    change:
+      mode: sidecar
+      image: dokku/s3backup:0.20.0
+      exec: ["dokku-couchdb-users", "change"]
+      env:
+        COUCHDB_USER: "{{ .ServiceName }}"
+        COUCHDB_PASSWORD: "{{ .Secret.password }}"
+        COUCHDB_USER_NAME: "{{ .Args.user }}"
+        COUCHDB_NEW_PASSWORD: "{{ .NewSecret }}"
+
 
   secrets:
     password:
@@ -122,13 +179,16 @@ x-dokku:
           COUCHDB_PASSWORD: "{{ .Secret.password }}"
 
     # beside the service for the same reason the dumps are. Every database an
-    # app could have written to goes, and the service's own is made again
+    # app could have written to goes, but for the ones made in the service, and
+    # the service's own is made again
     reset:
       mode: sidecar
       image: dokku/s3backup:0.20.0
       exec: ["dokku-couchdb-reset"]
       env:
         COUCHDB_DATABASE: "{{ .Database }}"
+        COUCHDB_DEFAULT_DATABASE: "{{ .DefaultDatabase }}"
+        COUCHDB_DATABASES: "{{ .Args.databases }}"
         COUCHDB_USER: "{{ .ServiceName }}"
         COUCHDB_PASSWORD: "{{ .Secret.password }}"
 

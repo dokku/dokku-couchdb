@@ -1,0 +1,129 @@
+#!/usr/bin/env python3
+"""Creates, destroys and changes the password of a user made in a service.
+
+A user is a document in the _users database rather than an admin, so it can
+only reach the databases that name it as a member. Every database the service
+holds is given it as one when it is made, and loses it when it is destroyed,
+which is what gives a user access to everything in the service and to nothing
+the server keeps for itself.
+
+Called as create, destroy or change, with the user and its new password in the
+environment, and the service's databases space separated.
+"""
+import base64
+import json
+import os
+import sys
+import time
+import urllib.error
+import urllib.parse
+import urllib.request
+
+HOST = os.environ.get("COUCHDB_HOST", "127.0.0.1")
+PORT = os.environ.get("COUCHDB_PORT", "5984")
+USER = os.environ["COUCHDB_USER"]
+PASSWORD = os.environ["COUCHDB_PASSWORD"]
+NAME = os.environ["COUCHDB_USER_NAME"]
+DATABASES = os.environ.get("COUCHDB_DATABASES", "").split()
+
+
+def request(path, method="GET", body=None):
+    url = "http://{}:{}/{}".format(HOST, PORT, path)
+    credentials = base64.b64encode("{}:{}".format(USER, PASSWORD).encode()).decode()
+    headers = {"Authorization": "Basic " + credentials, "Content-Type": "application/json"}
+    data = None if body is None else json.dumps(body).encode()
+    message = urllib.request.Request(url, data=data, headers=headers, method=method)
+
+    with urllib.request.urlopen(message) as response:
+        return json.load(response)
+
+
+def authenticates(password):
+    url = "http://{}:{}/_session".format(HOST, PORT)
+    credentials = base64.b64encode("{}:{}".format(NAME, password).encode()).decode()
+    message = urllib.request.Request(url, headers={"Authorization": "Basic " + credentials})
+
+    try:
+        with urllib.request.urlopen(message) as response:
+            return json.load(response).get("userCtx", {}).get("name") == NAME
+    except urllib.error.HTTPError:
+        return False
+
+
+def settle(password):
+    # the server reads its users through a cache that catches up with a write
+    # on its own time, so a password is only handed on once it is accepted
+    deadline = time.monotonic() + 30
+    while not authenticates(password):
+        if time.monotonic() > deadline:
+            sys.stderr.write("user {} was written, but its password is not accepted yet\n".format(NAME))
+            return
+        time.sleep(0.5)
+
+
+def document():
+    return "_users/" + urllib.parse.quote("org.couchdb.user:" + NAME, safe="")
+
+
+def membership(add):
+    for database in DATABASES:
+        path = urllib.parse.quote(database, safe="") + "/_security"
+        security = request(path)
+        names = security.setdefault("members", {}).setdefault("names", [])
+        if add and NAME not in names:
+            names.append(NAME)
+        elif not add and NAME in names:
+            names.remove(NAME)
+        else:
+            continue
+        request(path, method="PUT", body=security)
+
+
+def create():
+    # a server set up as a single node may not have made its users database
+    try:
+        request("_users", method="PUT")
+    except urllib.error.HTTPError as error:
+        if error.code != 412:
+            raise
+
+    request(document(), method="PUT", body={
+        "name": NAME,
+        "password": os.environ["COUCHDB_NEW_PASSWORD"],
+        "roles": [],
+        "type": "user",
+    })
+    membership(True)
+    settle(os.environ["COUCHDB_NEW_PASSWORD"])
+
+
+def destroy():
+    membership(False)
+    current = request(document())
+    request(document() + "?rev=" + urllib.parse.quote(current["_rev"], safe=""), method="DELETE")
+
+
+def change():
+    current = request(document())
+    current["password"] = os.environ["COUCHDB_NEW_PASSWORD"]
+    request(document(), method="PUT", body=current)
+    settle(os.environ["COUCHDB_NEW_PASSWORD"])
+
+
+def main():
+    actions = {"create": create, "destroy": destroy, "change": change}
+    if len(sys.argv) != 2 or sys.argv[1] not in actions:
+        sys.stderr.write("usage: dokku-couchdb-users create|destroy|change\n")
+        return 2
+
+    try:
+        actions[sys.argv[1]]()
+    except urllib.error.HTTPError as error:
+        sys.stderr.write("unable to {} user {}: {}\n".format(sys.argv[1], NAME, error))
+        return 1
+
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
